@@ -1,4 +1,4 @@
-)# NetEase-CMD
+# NetEase-CMD
 一个基于命令行的网易云音乐播放器 for Linux
 
 [![example](https://github.com/CxZMoE/NetEase-CMD/raw/master/image/example.gif)](https://github.com/CxZMoE/NetEase-CMD)
