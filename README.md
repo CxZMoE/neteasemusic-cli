@@ -1,4 +1,4 @@
-# NetEase-CMD
+)# NetEase-CMD
 一个基于命令行的网易云音乐播放器 for Linux
 
 [![example](https://github.com/CxZMoE/NetEase-CMD/raw/master/image/example.gif)](https://github.com/CxZMoE/NetEase-CMD)
@@ -99,4 +99,3 @@ sudo cp libbass.so /usr/lib
 ### 感谢以下项目的贡献
 * Binaryify / NeteaseCloudMusicApi 
 * buger / goterm 
-* eiannone / keyboard 
