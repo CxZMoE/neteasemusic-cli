@@ -8,7 +8,9 @@
 `libbass`
 `node`
 
-#### 编译
+#### 预编译
+
+#### 编译运行
 ```shell script
 # 如果没有装node请先安装
 # Ubuntu: sudo apt install npm
