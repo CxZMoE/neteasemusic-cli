@@ -51,7 +51,7 @@ sudo cp libbass.so /usr/lib
 | 按键   | 功能          |
 | ----- | --------------- | 
 | CTRL+ALT+左箭头| 上一首 |
-| CTRL+ALT+右箭头 下一首 | 
+| CTRL+ALT+右箭头| 下一首 | 
 | CTRL+ALT+PgDn| 快进 15s |
 | CTRL+ALT+PgUp|快退 15s |
 | CTRL+ALT+P| 播放/暂停 |
