@@ -8,8 +8,7 @@
 `libbass`
 `node`
 
-#### 如果没有安装`node`请先安装
-否则会报错  
+#### 如果没有安装`node`请先安装,否则会报错  
 Ubuntu: `sudo apt install npm`  
 Archlinux: `sudo pacman -S npm`  
 检查: `npm --version`
