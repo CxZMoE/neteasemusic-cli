@@ -8,7 +8,17 @@
 `libbass`
 `node`
 
-#### 预编译
+#### 预编译包
+前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载
+
+```shell script
+# v1.0 为例
+wget https://github.com/CxZMoE/NetEase-CMD/releases/download/v1.0/NetEase-CMD_v1.0_linux_amd64.tar.xz
+mkdir ncmd && mv NetEase-CMD_v1.0_linux_amd64.tar.xz ncmd
+cd ncmd #前往安装目录
+tar -Jxvf NetEase-CMD_v1.0_linux_amd64.tar.xz #解压
+./ncmd #运行
+```
 
 #### 编译运行
 ```shell script
