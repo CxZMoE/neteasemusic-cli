@@ -30,9 +30,9 @@ sudo cp libbass.so /usr/lib
 
 git clone https://github.com/CxZMoE/Netease-CMD.git
 cd Netease-CMD/
-go build app.go
+go build -o ncmd
 sudo cp libbass.so /usr/lib
-./app   #运行
+./ncmd   #运行
 ```
 
 ## 功能特性
