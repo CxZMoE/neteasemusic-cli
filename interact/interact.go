@@ -597,6 +597,7 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		menu := Menu{Items: []string{}}
 		fmt.Printf("\n===指令列表===")
 		menu.AddItem("[author] 显示作者信息")
+		menu.AddItem("[exit/q] 退出程序")
 		menu.AddItem("[login] <邮箱> <密码>: 邮箱登陆")
 		menu.AddItem("[logout]: 登出")
 		menu.AddItem("[qd]: 每日签到")
@@ -663,6 +664,10 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		CTRL+ALT+M: 改变播放模式
 		CTRL+ALT+L: 添加到喜欢`)
 	case "exit":
+		control.Release()
+		c.ShouldClose = true
+		break
+	case "q":
 		control.Release()
 		c.ShouldClose = true
 		break
