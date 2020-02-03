@@ -9,8 +9,8 @@
 `node`
 
 #### 预编译包
-前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载
-
+* 前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载  
+* [百度盘](https://pan.baidu.com/s/1i0EolwBQn1SB0egcs-iPcg) 提取码: w2ia
 ```shell script
 # v1.0 为例
 wget https://github.com/CxZMoE/NetEase-CMD/releases/download/v1.0/NetEase-CMD_v1.0_linux_amd64.tar.xz
