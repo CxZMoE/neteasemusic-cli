@@ -8,6 +8,12 @@
 `libbass`
 `node`
 
+#### 如果没有安装`node`请先安装
+否则会报错
+Ubuntu: `sudo apt install npm`
+Archlinux: `sudo pacman -S npm`
+检查: `npm --version`
+
 #### 预编译包
 * 前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载  
 * [百度盘](https://pan.baidu.com/s/13KpBHJvMKqPIm7htPu4_uA) 提取码: k2b9
