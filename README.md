@@ -17,6 +17,7 @@ wget https://github.com/CxZMoE/NetEase-CMD/releases/download/v1.0/NetEase-CMD_v1
 mkdir ncmd && mv NetEase-CMD_v1.0_linux_amd64.tar.xz ncmd
 cd ncmd #前往安装目录
 tar -Jxvf NetEase-CMD_v1.0_linux_amd64.tar.xz #解压
+sudo cp libbass.so /usr/lib
 ./ncmd #运行
 ```
 
