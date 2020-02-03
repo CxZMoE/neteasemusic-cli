@@ -72,7 +72,7 @@ sudo cp libbass.so /usr/lib
 0) [author] 显示作者信息
 1) [login] <邮箱> <密码>: 邮箱登陆
 2) [logout]: 登出
-3) [exit]: 退出程序
+3) [exit/q]: 退出程序
 4) [qd]: 每日签到
 5) [fm]: 前往私人FM模式
 6) [fav]: 前往我喜欢的音乐
