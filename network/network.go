@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/CxZMoE/xz-ease-player/logger"
+	"github.com/CxZMoE/NetEase-CMD/logger"
 )
 
 // Headers 请求头列表
@@ -57,7 +57,7 @@ func NewClient() *Client {
 	client := &Client{
 		LoginStatus: loginStatus,
 		CoreClient:  httpClient,
-		UserAgent:   "xz-ease-player/1.0",
+		UserAgent:   "NetEase-CMD/1.0",
 	}
 	return client
 }
@@ -81,7 +81,7 @@ func (c *Client) DoLoginGet(url string, params map[string]string) []byte {
 
 	// Create headers
 	headers := Headers{
-		"User-Agent": "xz-ease-player/1.0",
+		"User-Agent": "NetEase-CMD/1.0",
 		"xhrFields":  "{ withCredentials: true }",
 	}
 	req := c.NewRequest("GET", headers, url, params, nil)
@@ -107,7 +107,7 @@ func (c *Client) DoGet(url string, params map[string]string) []byte {
 
 	// Create headers
 	headers := Headers{
-		"User-Agent": "xz-ease-player/1.0",
+		"User-Agent": "NetEase-CMD/1.0",
 		"xhrFields":  "{ withCredentials: true }",
 	}
 	req := c.NewRequest("GET", headers, url, params, nil)

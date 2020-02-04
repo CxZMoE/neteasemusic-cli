@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/CxZMoE/NetEase-CMD/account"
+	"github.com/CxZMoE/NetEase-CMD/logger"
 	bass "github.com/CxZMoE/bass-go"
-	"github.com/CxZMoE/xz-ease-player/account"
-	"github.com/CxZMoE/xz-ease-player/logger"
 	tm "github.com/buger/goterm"
 )
 

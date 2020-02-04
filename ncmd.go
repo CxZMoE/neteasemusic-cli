@@ -7,11 +7,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/CxZMoE/xz-ease-player/account"
-	"github.com/CxZMoE/xz-ease-player/control"
-	"github.com/CxZMoE/xz-ease-player/interact"
-	"github.com/CxZMoE/xz-ease-player/logger"
-	"github.com/CxZMoE/xz-ease-player/network"
+	"github.com/CxZMoE/NetEase-CMD/account"
+	"github.com/CxZMoE/NetEase-CMD/control"
+	"github.com/CxZMoE/NetEase-CMD/interact"
+	"github.com/CxZMoE/NetEase-CMD/logger"
+	"github.com/CxZMoE/NetEase-CMD/network"
 )
 
 var me account.Login

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/CxZMoE/xz-ease-player/logger"
-	"github.com/CxZMoE/xz-ease-player/network"
+	"github.com/CxZMoE/NetEase-CMD/logger"
+	"github.com/CxZMoE/NetEase-CMD/network"
 )
 
 // API 地址列表

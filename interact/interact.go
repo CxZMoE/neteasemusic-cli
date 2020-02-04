@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/CxZMoE/xz-ease-player/account"
-	"github.com/CxZMoE/xz-ease-player/control"
-	"github.com/CxZMoE/xz-ease-player/logger"
-	xkb "github.com/CxZMoE/xz-keyboard"
+	"github.com/CxZMoE/NetEase-CMD/account"
+	"github.com/CxZMoE/NetEase-CMD/control"
+	"github.com/CxZMoE/NetEase-CMD/logger"
+	xzkey "github.com/CxZMoE/XZ-Key"
 
 	"os"
 	"strconv"
@@ -230,7 +230,7 @@ func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 	go ShowLyric(player, login, 0)
 
 	// Hot key bindings
-	k := xkb.NewKeyboard()
+	k := xzkey.NewKeyboard()
 	if k == nil {
 		// CTRL+ALT+RightArrow: Next Song
 		// CTRL+ALT+LeftArrow: Last Song
@@ -250,12 +250,12 @@ func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 		// CTRL+ALT+RightArrow: Next Song
 		k.BindKeyEvent("keyboard_next", func() {
 			player.Next()
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.RIGHT])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.RIGHT])
 
 		// CTRL+ALT+LeftArrow: Last Song
 		k.BindKeyEvent("keyboard_last", func() {
 			player.Last()
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.LEFT])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.LEFT])
 
 		// CTRL+ALT+P: Play/Pause
 		k.BindKeyEvent("keyboard_pause", func() {
@@ -264,51 +264,51 @@ func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 			} else {
 				player.Play()
 			}
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.P])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.P])
 
 		// CTRL+ALT+]: Increase volume
 		k.BindKeyEvent("keyboard_vol_increase", func() {
 			vol := player.GetVolume() + 10
 			player.SetVolume(vol)
 			fmt.Printf("\n[VOL] %d%%", vol)
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.Zkhy])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.Zkhy])
 
 		// CTRL+ALT+[: Decrease volume
 		k.BindKeyEvent("keyboard_vol_decrease", func() {
 			vol := player.GetVolume() - 10
 			player.SetVolume(vol)
 			fmt.Printf("\n[VOL] %d%%", vol)
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.Zkhz])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.Zkhz])
 
 		// CTRL+ALT+F: Go favorite mode
 		k.BindKeyEvent("keyboard_fav", func() {
 			fav(player, login)
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.F])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.F])
 
 		// CTRL+ALT+G: Go FM mode
 		k.BindKeyEvent("keyboard_fm", func() {
 			fm(player, login)
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.G])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.G])
 
 		// CTRL+ALT+S: Stop playing
 		k.BindKeyEvent("keyboard_stop", func() {
 			stop(player)
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.S])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.S])
 
 		// CTRL+ALT+D: Go day recommend mode
 		k.BindKeyEvent("keyboard_day", func() {
 			day(player, login)
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.D])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.D])
 
 		// CTRL+ALT+M: Change mode
 		k.BindKeyEvent("keyboard_mode", func() {
 			mode(player)
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.M])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.M])
 
 		// CTRL+ALT+L: Like this song
 		k.BindKeyEvent("keyboard_like", func() {
 			like(player, login)
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.L])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.L])
 
 		// CTRL+ALT+PgUp: Fast backward
 		k.BindKeyEvent("keyboard_fastforward", func() {
@@ -326,7 +326,7 @@ func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 					}
 				}()
 			}
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.PgUp])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.PgUp])
 
 		// CTRL+ALT+PgDn: Fast forward
 		k.BindKeyEvent("keyboard_fastbackward", func() {
@@ -344,7 +344,7 @@ func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 					}
 				}()
 			}
-		}, k.Keys[xkb.LCTRL], k.Keys[xkb.LALT], k.Keys[xkb.PgDn])
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.PgDn])
 	}
 
 	//defer k.StopReadEvent()
