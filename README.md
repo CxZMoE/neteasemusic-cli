@@ -14,16 +14,18 @@ Archlinux: `sudo pacman -S npm`
 检查: `npm --version`
 
 #### 预编译包
-* 前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载  
-* [百度盘](https://pan.baidu.com/s/13KpBHJvMKqPIm7htPu4_uA) 提取码: k2b9
+* 前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载最新版  
+* [百度网盘](https://pan.baidu.com/s/1DWxXGCi3xNv-ZmUTG_e6DQ) 提取码: efgt
+
 ```shell script
-# v1.0 为例
+# 最新版请到release下载，这里以v1.0 为例
 wget https://github.com/CxZMoE/NetEase-CMD/releases/download/v1.0/NetEase-CMD_v1.0_linux_amd64.tar.xz
 mkdir ncmd && mv NetEase-CMD_v1.0_linux_amd64.tar.xz ncmd
-cd ncmd #前往安装目录
-tar -Jxvf NetEase-CMD_v1.0_linux_amd64.tar.xz #解压
+cd ncmd # 前往安装目录
+tar -Jxvf NetEase-CMD_v1.0_linux_amd64.tar.xz # 解压
 sudo cp libbass.so /usr/lib
-./ncmd #运行
+./ncmd # 运行
+# sudo ./ncmd # 支持全局快捷键
 ```
 
 #### 编译运行
@@ -67,7 +69,7 @@ sudo cp libbass.so /usr/lib
 | CTRL+ALT+G| 前往私人FM |
 | CTRL+ALT+D| 前往推荐 |
 | CTRL+ALT+M| 改变播放模式 |
-| CTRL+ALT+L| 添加到喜欢 |
+| CTRL+ALT+K| 添加到喜欢 |
 | CTRL+ALT+L| 取消喜欢 |
 
 ## 命令行帮助菜单
