@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+
 	"github.com/CxZMoE/xz-ease-player/account"
 	"github.com/CxZMoE/xz-ease-player/control"
 	"github.com/CxZMoE/xz-ease-player/logger"
@@ -13,43 +14,45 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	//"time"
 )
 
 var homedir = ""
 
+// ClientApp 网易云客户端
 type ClientApp struct {
 	ShouldClose     bool
 	ShouldPrintMenu bool
 	BindHandles     []func()
 }
 
+// Menu 帮助菜单
 type Menu struct {
 	Items []string
 }
 
 // Play list modes
 const (
-	MODE_FM     = 0
-	MODE_MYFAV  = 1
-	MODE_NORMAL = 2
-	MODE_INTEL  = 3
-	MODE_DAY    = 4
+	ModeFM     = 0
+	ModeMyFav  = 1
+	ModeNormal = 2
+	ModeIntel  = 3
+	ModeDay    = 4
 )
 
 func init() {
 }
 
+// NewClientApp 创建新网易云客户端
 func NewClientApp() *ClientApp {
 	c := &ClientApp{ShouldClose: false, ShouldPrintMenu: true}
 	return c
 }
 func fav(player *control.Player, login *account.Login) {
 	player.Status = control.StatusOther
-	if player.PlayFeature == MODE_MYFAV {
-		player.PlayFeature = MODE_NORMAL
+	if player.PlayFeature == ModeMyFav {
+		player.PlayFeature = ModeNormal
 	} else {
-		player.PlayFeature = MODE_MYFAV
+		player.PlayFeature = ModeMyFav
 	}
 	// Get play sheet struct.
 	toIndex := 0
@@ -59,19 +62,19 @@ func fav(player *control.Player, login *account.Login) {
 	fmt.Printf("\n[Creator] %s", sheet.CreatorName)
 
 	// Load Detail
-	sheet.LoadDetail(login) // Load Song Ids.
-	player.PlayFeature = MODE_NORMAL
+	sheet.LoadDetail(login) // Load Song IDs.
+	player.PlayFeature = ModeNormal
 
 	player.EmptyPlayList()
 	player.Playlist = make([]control.Music, len(sheet.Songs))
 
-	player.NowPlayingSheetId = sheet.Id // For heartbeat mode purpose.
+	player.NowPlayingSheetID = sheet.ID // For heartbeat mode purpose.
 
 	for i, v := range sheet.Songs {
 		fmt.Printf("\n[Song %d] %s", len(sheet.Songs)-i, sheet.Songs[len(sheet.Songs)-i-1].Name)
 		player.Playlist[i].Name = v.Name
-		player.Playlist[i].PlaySourceType = control.SOURCE_WEB
-		player.Playlist[i].Id = v.Id
+		player.Playlist[i].PlaySourceType = control.SourceWeb
+		player.Playlist[i].ID = v.ID
 	}
 
 	if len(player.Playlist) > 0 {
@@ -87,10 +90,10 @@ func fav(player *control.Player, login *account.Login) {
 }
 func day(player *control.Player, login *account.Login) {
 	player.Status = control.StatusOther
-	if player.PlayFeature == MODE_DAY {
-		player.PlayFeature = MODE_NORMAL
+	if player.PlayFeature == ModeDay {
+		player.PlayFeature = ModeNormal
 	} else {
-		player.PlayFeature = MODE_DAY
+		player.PlayFeature = ModeDay
 	}
 	player.EmptyPlayList()
 	songs := login.GetRecommend()
@@ -101,8 +104,8 @@ func day(player *control.Player, login *account.Login) {
 	for i, v := range songs {
 		fmt.Printf("\n[Song %d] %s", len(songs)-i, songs[len(songs)-i-1].Name)
 		player.Playlist[i].Name = v.Name
-		player.Playlist[i].Id = v.Id
-		player.Playlist[i].PlaySourceType = control.SOURCE_WEB
+		player.Playlist[i].ID = v.ID
+		player.Playlist[i].PlaySourceType = control.SourceWeb
 	}
 	if len(songs) > 0 {
 		if player.PlayMode == control.ModeRandom {
@@ -116,10 +119,10 @@ func day(player *control.Player, login *account.Login) {
 }
 func fm(player *control.Player, login *account.Login) {
 	player.Status = control.StatusOther
-	if player.PlayFeature == MODE_FM {
-		player.PlayFeature = MODE_NORMAL
+	if player.PlayFeature == ModeFM {
+		player.PlayFeature = ModeNormal
 	} else {
-		player.PlayFeature = MODE_FM
+		player.PlayFeature = ModeFM
 	}
 
 	player.EmptyPlayList()
@@ -127,9 +130,9 @@ func fm(player *control.Player, login *account.Login) {
 	player.Playlist = make([]control.Music, len(songs))
 	for i, v := range songs {
 		fmt.Printf("\n[Song %d] %s", len(songs)-i, songs[len(songs)-i-1].Name)
-		player.Playlist[i].Id = v.Id
+		player.Playlist[i].ID = v.ID
 		player.Playlist[i].Name = v.Name
-		player.Playlist[i].PlaySourceType = control.SOURCE_WEB
+		player.Playlist[i].PlaySourceType = control.SourceWeb
 	}
 	if len(songs) > 0 {
 		if player.PlayMode == control.ModeRandom {
@@ -142,18 +145,18 @@ func fm(player *control.Player, login *account.Login) {
 	//player.Play()
 }
 func qd(player *control.Player, login *account.Login) {
-	reqUrl := account.ApiSignIn
-	androidQd := login.Client.DoGet(fmt.Sprintf(reqUrl, 0), nil)
-	if androidQd == nil {
+	reqURL := account.APISignIn
+	androidQD := login.Client.DoGet(fmt.Sprintf(reqURL, 0), nil)
+	if androidQD == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return
 	}
-	if login.GetStatusCode(androidQd) == 200 {
+	if login.GetStatusCode(androidQD) == 200 {
 		fmt.Printf("\n[INFO] 安卓登录 +2")
 	} else {
 		fmt.Printf("\n[INFO] 你已经用安卓登录过一次了")
 	}
-	pcQd := login.Client.DoGet(fmt.Sprintf(reqUrl, 1), nil)
+	pcQd := login.Client.DoGet(fmt.Sprintf(reqURL, 1), nil)
 	if pcQd == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return
@@ -171,7 +174,7 @@ func stop(player *control.Player) {
 }
 
 func like(player *control.Player, login *account.Login) {
-	nowIndex := player.Playlist[player.GetCurrentIndex()].Id
+	nowIndex := player.Playlist[player.GetCurrentIndex()].ID
 	if login.Like(nowIndex) {
 		fmt.Printf("\n[INFO] 喜欢音乐 [%s] 成功", player.Playlist[player.GetCurrentIndex()].Name)
 	} else {
@@ -189,7 +192,7 @@ func mode(player *control.Player) {
 	)
 	cm := player.PlayMode
 	if cm >= 0 && cm < 3 {
-		cm += 1
+		cm++
 	}
 	if cm >= 3 {
 		cm = 0
@@ -213,7 +216,7 @@ func mode(player *control.Player) {
 	fmt.Printf("\n[INFO] 切换播放模式到: %s", cmtext)
 }
 
-// MainLoop
+// MainLoop 客户端主循环
 func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 	defer func() {
 		//捕获test抛出的panic
@@ -359,7 +362,7 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 	cmd := args[0]
 	switch cmd {
 	case "author":
-		fmt.Printf("\n[Author] CxZMoE\n[EMAIL] forevermisaka@163.com\n[GITHUB] https://github.com/CxZMoE\n[MSG] If you find a bug,please contact me,thanks.\n[MSG] This software is free,if you have paid for this,you were cheated.")
+		fmt.Printf("\n[Author] CxZMoE\n[EMAIL] forevermisaka@163.com\n[GITHUB] https://github.com/CxZMoE\n[MSG] If you find a bug,please contact me,thanks.\n[MSG] This software is free,if you have paID for this,you were cheated.")
 		break
 	case "login":
 		email, passwd := args[1], args[2]
@@ -403,7 +406,7 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		login.GetAllPlaySheet()
 		if len(args) == 1 {
 			fmt.Printf("\n===歌单===")
-			for i, _ := range login.PlaySheets {
+			for i := range login.PlaySheets {
 				fmt.Printf("\n[%d] %s [%s]", len(login.PlaySheets)-i, login.PlaySheets[len(login.PlaySheets)-i-1].Name, login.PlaySheets[len(login.PlaySheets)-i-1].CreatorName)
 			}
 			fmt.Printf("\n============")
@@ -419,19 +422,19 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 			fmt.Printf("\n[创建者] %s", sheet.CreatorName)
 
 			// Load Detail
-			sheet.LoadDetail(login) // Load Song Ids.
-			player.PlayFeature = MODE_NORMAL
+			sheet.LoadDetail(login) // Load Song IDs.
+			player.PlayFeature = ModeNormal
 
 			player.EmptyPlayList()
 			player.Playlist = make([]control.Music, len(sheet.Songs))
 
-			player.NowPlayingSheetId = sheet.Id // For heartbeat mode purpose.
+			player.NowPlayingSheetID = sheet.ID // For heartbeat mode purpose.
 
 			for i, v := range sheet.Songs {
 				fmt.Printf("\n[歌曲 %d] %s", len(sheet.Songs)-i, sheet.Songs[len(sheet.Songs)-i-1].Name)
 				player.Playlist[i].Name = v.Name
-				player.Playlist[i].PlaySourceType = control.SOURCE_WEB
-				player.Playlist[i].Id = v.Id
+				player.Playlist[i].PlaySourceType = control.SourceWeb
+				player.Playlist[i].ID = v.ID
 			}
 
 			if len(player.Playlist) > 0 {
@@ -447,14 +450,14 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		break
 	case "list":
 		if len(player.Playlist) > 0 {
-			for i, _ := range player.Playlist {
+			for i := range player.Playlist {
 				fmt.Printf("\n[%d] %s", len(player.Playlist)-i, player.Playlist[len(player.Playlist)-i-1].Name)
 			}
 		}
 		break
 	case "ls":
 		if len(player.Playlist) > 0 {
-			for i, _ := range player.Playlist {
+			for i := range player.Playlist {
 				fmt.Printf("\n[%d] %s", len(player.Playlist)-i, player.Playlist[len(player.Playlist)-i-1].Name)
 			}
 		}
@@ -495,7 +498,7 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		break
 	case "goto":
 		index, _ := strconv.Atoi(args[1])
-		index -= 1
+		index--
 		if index < 0 || index >= len(player.Playlist) {
 			fmt.Printf("\n[INFO] goto: 序号超出范围")
 			break
@@ -508,7 +511,7 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		break
 	case "go":
 		index, _ := strconv.Atoi(args[1])
-		index -= 1
+		index--
 		if index < 0 || index >= len(player.Playlist) {
 			fmt.Printf("\n[INFO] goto: 序号超出范围")
 			break
@@ -524,33 +527,33 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		break
 	case "i":
 		player.Status = control.StatusOther
-		if player.PlayFeature != MODE_NORMAL {
-			logger.WriteLog("Please choose a play sheet first,Use: sheet [id]")
+		if player.PlayFeature != ModeNormal {
+			logger.WriteLog("Please choose a play sheet first,Use: sheet [ID]")
 		} else {
-			player.PlayFeature = MODE_INTEL
-			//log.Println(fmt.Sprintf(account.ApiHeartbeatMode,player.Playlist[player.GetCurrentIndex()].Id,player.NowPlayingSheetId))
-			reqUrl := fmt.Sprintf(account.ApiHeartbeatMode, player.Playlist[player.GetCurrentIndex()].Id, player.NowPlayingSheetId)
-			listDatas := login.Client.DoGet(reqUrl, nil)
+			player.PlayFeature = ModeIntel
+			//log.Println(fmt.Sprintf(account.APIHeartbeatMode,player.Playlist[player.GetCurrentIndex()].ID,player.NowPlayingSheetID))
+			reqURL := fmt.Sprintf(account.APIHeartbeatMode, player.Playlist[player.GetCurrentIndex()].ID, player.NowPlayingSheetID)
+			listDatas := login.Client.DoGet(reqURL, nil)
 			if listDatas == nil {
 				fmt.Printf("\n[ERR] 请检查您的网络状况")
 				break
 			}
-			var listDatasJson interface{}
+			var listDatasJSON interface{}
 			var ss []account.Song
-			json.Unmarshal(listDatas, &listDatasJson)
-			data := listDatasJson.(map[string]interface{})["data"]
+			json.Unmarshal(listDatas, &listDatasJSON)
+			data := listDatasJSON.(map[string]interface{})["data"]
 			if data != nil {
 				for _, v := range data.([]interface{}) {
 					var s account.Song
 					songInfo := v.(map[string]interface{})["songInfo"]
 					if songInfo != nil {
-						id := songInfo.(map[string]interface{})["id"]
+						ID := songInfo.(map[string]interface{})["ID"]
 						name := songInfo.(map[string]interface{})["name"]
 						//log.Println(name)
-						if id == nil || name == nil {
+						if ID == nil || name == nil {
 							continue
 						}
-						s.Id = int(id.(float64))
+						s.ID = int(ID.(float64))
 						s.Name = name.(string)
 
 					} else {
@@ -572,8 +575,8 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 			player.Playlist = make([]control.Music, len(ss))
 			for i, v := range ss {
 				player.Playlist[i].Name = v.Name
-				player.Playlist[i].Id = v.Id
-				player.Playlist[i].PlaySourceType = control.SOURCE_WEB
+				player.Playlist[i].ID = v.ID
+				player.Playlist[i].PlaySourceType = control.SourceWeb
 			}
 
 			if len(player.Playlist) > 0 {
@@ -594,49 +597,44 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		qd(player, login)
 		break
 	case "m":
-		menu := Menu{Items: []string{}}
+		Menu := Menu{Items: []string{}}
 		fmt.Printf("\n===指令列表===")
-		menu.AddItem("[author] 显示作者信息")
-		menu.AddItem("[exit/q] 退出程序")
-		menu.AddItem("[login] <邮箱> <密码>: 邮箱登陆")
-		menu.AddItem("[logout]: 登出")
-		menu.AddItem("[qd]: 每日签到")
-		menu.AddItem("[fm]: 前往私人FM模式")
-		menu.AddItem("[fav]: 前往我喜欢的音乐")
-		menu.AddItem("[day]: 前往每日推荐")
-		menu.AddItem("[sheet]: 显示当前歌单列表")
-		menu.AddItem("[sheet] <序号>: 前往对应序号歌单")
-		menu.AddItem("[list/ls]: 显示播放列表")
-		menu.AddItem("[goto/go] <序号>: 转跳到指定序号歌曲")
-		menu.AddItem("[time/t] <sec>: 跳到歌曲的第sec秒")
-		menu.AddItem("[last/l]: 上一首")
-		menu.AddItem("[next/n]: 下一首")
-		menu.AddItem("[play/p]: 播放歌曲")
-		menu.AddItem("[pause]: 暂停歌曲")
-		menu.AddItem("[stop]: 停止歌曲")
-		menu.AddItem("[pg]: 显示进度条 #显示的时候输入字符会被刷掉.")
-		menu.AddItem("[key] 显示快捷键列表")
-		c.PrintMenu(menu)
+		Menu.AddItem("[author] 显示作者信息")
+		Menu.AddItem("[exit/q] 退出程序")
+		Menu.AddItem("[login] <邮箱> <密码>: 邮箱登陆")
+		Menu.AddItem("[logout]: 登出")
+		Menu.AddItem("[qd]: 每日签到")
+		Menu.AddItem("[fm]: 前往私人FM模式")
+		Menu.AddItem("[fav]: 前往我喜欢的音乐")
+		Menu.AddItem("[day]: 前往每日推荐")
+		Menu.AddItem("[sheet]: 显示当前歌单列表")
+		Menu.AddItem("[sheet] <序号>: 前往对应序号歌单")
+		Menu.AddItem("[list/ls]: 显示播放列表")
+		Menu.AddItem("[goto/go] <序号>: 转跳到指定序号歌曲")
+		Menu.AddItem("[time/t] <sec>: 跳到歌曲的第sec秒")
+		Menu.AddItem("[last/l]: 上一首")
+		Menu.AddItem("[next/n]: 下一首")
+		Menu.AddItem("[play/p]: 播放歌曲")
+		Menu.AddItem("[pause]: 暂停歌曲")
+		Menu.AddItem("[stop]: 停止歌曲")
+		Menu.AddItem("[pg]: 显示进度条 #显示的时候输入字符会被刷掉.")
+		Menu.AddItem("[key] 显示快捷键列表")
+		c.PrintMenu(Menu)
 		fmt.Printf("\n====================")
 		break
 	case "vol":
 		value, err := strconv.Atoi(args[1])
 		if value < 0 || value > 100 {
 			fmt.Printf("\n[INFO] 错误的值(过大/过小)")
-			break
 		}
 		if err != nil {
 			fmt.Printf("\n[INFO] 错误的值")
-			break
 		}
 		if player.SetVolume(uint(value)) == 1 {
 			fmt.Printf("\n[INFO] 设置音量为 %d", value)
-			break
 		} else {
 			fmt.Printf("\n[INFO] 设置音量失败")
-			break
 		}
-
 		break
 	case "x": // Lyric ON/OFF
 		if player.LyricSwitch == true {
@@ -722,29 +720,33 @@ func getInput() string {
 	input, _, _ := reader.ReadLine()
 	return string(input)
 }
+
+// PrintPrefix 打印每行的前缀
 func (c *ClientApp) PrintPrefix(prefix string) {
 	fmt.Printf("\n%s", prefix)
 }
 
-func (c *ClientApp) PrintMenu(menu Menu) {
+// PrintMenu 打印帮助菜单
+func (c *ClientApp) PrintMenu(Menu Menu) {
 	if !c.ShouldPrintMenu {
 		return
 	}
-	for i, v := range menu.Items {
+	for i, v := range Menu.Items {
 		fmt.Printf("\n%d) %s", i, v)
 	}
 }
 
+// AddItem 向帮助菜单中添加项目
 func (m *Menu) AddItem(value string) *Menu {
 	if m.Items != nil {
 		m.Items = append(m.Items, value)
 		return m
-	} else {
-		fmt.Printf("\n[INFO] 菜单项目不应为空")
-		return nil
 	}
+	fmt.Printf("\n[INFO] 菜单项目不应为空")
+	return nil
 }
 
+// ShowLyric 显示歌词
 func ShowLyric(player *control.Player, login *account.Login, offset int) {
 	if err := recover(); err != nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
@@ -790,33 +792,30 @@ func ShowLyric(player *control.Player, login *account.Login, offset int) {
 	}
 }
 
+// GetLyricCurrent 获取当前播放歌曲的歌词
 func GetLyricCurrent(player *control.Player, login *account.Login) string {
-	id := player.Playlist[player.GetCurrentIndex()].Id
-	reqUrl := fmt.Sprintf(account.ApiLyric, id)
-	lyricData := login.Client.DoGet(reqUrl, nil)
+	ID := player.Playlist[player.GetCurrentIndex()].ID
+	reqURL := fmt.Sprintf(account.APILyric, ID)
+	lyricData := login.Client.DoGet(reqURL, nil)
 	if lyricData == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return ""
 	}
-	var dataJson interface{}
-	json.Unmarshal(lyricData, &dataJson)
-	if dataJson != nil {
-		lrc := dataJson.(map[string]interface{})["lrc"]
+	var dataJSON interface{}
+	json.Unmarshal(lyricData, &dataJSON)
+	if dataJSON != nil {
+		lrc := dataJSON.(map[string]interface{})["lrc"]
 		if lrc != nil {
 			lyric := lrc.(map[string]interface{})["lyric"]
 			if lyric != nil {
 				return lyric.(string)
-			} else {
-				return ""
 			}
-		} else {
-			return ""
 		}
-	} else {
-		return ""
 	}
+	return ""
 }
 
+// LyricLine 歌词行信息
 type LyricLine struct {
 	Min     int
 	Sec     int
@@ -824,6 +823,7 @@ type LyricLine struct {
 	Length  int
 }
 
+// ParseLyric 解析歌词
 func ParseLyric(src string) map[int]LyricLine {
 	var lls []LyricLine
 	var llss map[int]LyricLine

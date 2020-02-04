@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"syscall"
+	"time"
+
 	"github.com/CxZMoE/xz-ease-player/account"
 	"github.com/CxZMoE/xz-ease-player/control"
 	"github.com/CxZMoE/xz-ease-player/interact"
 	"github.com/CxZMoE/xz-ease-player/logger"
 	"github.com/CxZMoE/xz-ease-player/network"
-	"os"
-	"path/filepath"
-	"syscall"
-	"time"
 )
 
 var me account.Login
@@ -19,7 +20,7 @@ var apiPid int
 func init() {
 	chdir()
 	// Load NetEase Api
-	apiPid = LoadApi()
+	apiPid = loadAPI()
 
 }
 
@@ -41,15 +42,18 @@ func main() {
 	client := network.NewClient()
 	_, err = os.Stat(homedir + "/xzp/cookie")
 	if os.IsNotExist(err) {
+
 		fmt.Printf("\n[INFO] 你还没有登录呢,请先登录")
 	} else {
 		client.LoadJar(homedir + "/xzp/cookie")
 		fmt.Printf("\n[INFO] 已登录")
 		fmt.Printf("\n[INFO] 如果无法获取到准确信息,请重新登陆.")
+
 	}
 	login := account.NewLogin(client)
 
 	player := control.NewPlayer(login)
+
 	player.SetPlayMode(control.ModeListLoop)
 	// Auto Play Control
 	go func() {
@@ -84,17 +88,18 @@ func main() {
 	app.MainLoop(login, player)
 }
 
-func LoadApi() int {
-	loadedApi := make(chan bool, 1)
+// 加载API
+func loadAPI() int {
+	loadedAPI := make(chan bool, 1)
 	result := control.StartAPI()
 	if result.Process != nil {
 		logger.WriteLog("API Started.")
-		loadedApi <- true
+		loadedAPI <- true
 	} else {
 		panic(result)
 	}
 
-	<-loadedApi
+	<-loadedAPI
 	return result.Process.Pid
 }
 

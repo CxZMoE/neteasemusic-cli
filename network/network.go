@@ -3,7 +3,6 @@ package network
 import (
 	"bytes"
 	"fmt"
-	"github.com/CxZMoE/xz-ease-player/logger"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
@@ -11,20 +10,27 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/CxZMoE/xz-ease-player/logger"
 )
 
+// Headers 请求头列表
 type Headers map[string]string
+
+// Params 请求参数表
 type Params map[string]string
+
+// PostForm PostForm表
 type PostForm map[string]string
 
-// Client xz-ease-player client
+// Client 网络客户端
 type Client struct {
 	LoginStatus bool
 	CoreClient  http.Client
 	UserAgent   string
 }
 
-// NewClient Create a new client for request.
+// NewClient 创建新的客户端用于执行请求
 func NewClient() *Client {
 	homedir, err := os.UserHomeDir()
 	if err != nil {
@@ -56,9 +62,9 @@ func NewClient() *Client {
 	return client
 }
 
-// NewRequest Create new request
+// NewRequest 创建新的请求
 func (c *Client) NewRequest(method string, headers Headers, url string, params Params, body []byte) *http.Request {
-	url = makeUrl(url, params)
+	url = makeURL(url, params)
 	// Make Request
 	request, err := http.NewRequest(strings.ToUpper(method), url, bytes.NewBuffer(body))
 	dealErr(err)
@@ -69,6 +75,7 @@ func (c *Client) NewRequest(method string, headers Headers, url string, params P
 	return request
 }
 
+// DoLoginGet 用于登录的请求
 func (c *Client) DoLoginGet(url string, params map[string]string) []byte {
 	client := c.CoreClient
 
@@ -94,7 +101,7 @@ CLIENTDO1:
 	return body
 }
 
-// DoGet Do get request returns body
+// DoGet 执行GET请求
 func (c *Client) DoGet(url string, params map[string]string) []byte {
 	client := c.CoreClient
 
@@ -120,7 +127,7 @@ CLIENTDO1:
 	return body
 }
 
-// DoPostForm Do post request returns body
+// DoPostForm 执行POSTFORM
 func (c *Client) DoPostForm(url string, req *http.Request, params Params, form PostForm, body []byte) []byte {
 	client := c.CoreClient
 
@@ -146,7 +153,7 @@ CLIENTDO1:
 
 }
 
-// DoPost Do post request returns body
+// DoPost 执行POST请求
 func (c *Client) DoPost(url string, req *http.Request, params Params, body []byte) []byte {
 	client := c.CoreClient
 	u, _ := url2.Parse("http://localhost:3000/")
@@ -168,7 +175,7 @@ CLIENTDO1:
 
 }
 
-// dealErr Deal with some errors
+// dealErr 处理错误信息
 func dealErr(err error) error {
 	if err != nil {
 		logger.WriteLog(err.Error())
@@ -178,8 +185,8 @@ func dealErr(err error) error {
 	return nil
 }
 
-// makeUrl format url with params
-func makeUrl(urlBase string, params map[string]string) string {
+// makeURL 根据参数params生成URL
+func makeURL(urlBase string, params map[string]string) string {
 	url := urlBase
 	strings.TrimRight(url, "/")
 	count := 0
@@ -194,6 +201,7 @@ func makeUrl(urlBase string, params map[string]string) string {
 	return url
 }
 
+// SaveJar 保存 cookie jar
 func (c *Client) SaveJar(jar http.CookieJar) {
 	homedir, err := os.UserHomeDir()
 	if err != nil {
@@ -211,6 +219,7 @@ func (c *Client) SaveJar(jar http.CookieJar) {
 	}
 }
 
+// LoadJar 加载 cookie jar
 func (c *Client) LoadJar(src string) {
 	file, err := os.OpenFile(src, os.O_RDONLY, 0755)
 	dealErr(err)
@@ -240,6 +249,7 @@ func (c *Client) LoadJar(src string) {
 	c.CoreClient.Jar.SetCookies(url, cookies)
 }
 
+// LoadJar 加载 cookie jar
 func LoadJar(src string) http.CookieJar {
 	file, err := os.OpenFile(src, os.O_RDONLY, 0755)
 	dealErr(err)

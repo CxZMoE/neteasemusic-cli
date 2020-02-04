@@ -3,16 +3,17 @@ package control
 import "C"
 import (
 	"fmt"
-	bass "github.com/CxZMoE/bass-go"
-	"github.com/CxZMoE/xz-ease-player/account"
-	"github.com/CxZMoE/xz-ease-player/logger"
-	tm "github.com/buger/goterm"
 	"math/rand"
 	"os"
 	"os/exec"
 	"strings"
 	"syscall"
 	"time"
+
+	bass "github.com/CxZMoE/bass-go"
+	"github.com/CxZMoE/xz-ease-player/account"
+	"github.com/CxZMoE/xz-ease-player/logger"
+	tm "github.com/buger/goterm"
 )
 
 // Play Status
@@ -32,9 +33,10 @@ const (
 	ModeSingleStop = 3
 )
 
-type handle string
-type File string
+//type handle string
+//type File string
 
+// Player 音乐播放器
 type Player struct {
 	Status            uint
 	PlayFeature       int
@@ -44,7 +46,7 @@ type Player struct {
 	Playlist          []Music
 	NowPlayingIndex   int
 	LastIndex         int
-	NowPlayingSheetId int
+	NowPlayingSheetID int
 	LastHandle        uint
 	Login             *account.Login
 	LyricSwitch       bool
@@ -52,8 +54,9 @@ type Player struct {
 	IsShowProgress    bool
 }
 
+// Music 歌曲
 type Music struct {
-	Id             int
+	ID             int
 	Name           string
 	Author         string
 	Album          string
@@ -66,8 +69,8 @@ type Music struct {
 
 // Play Source Type
 const (
-	SOURCE_FILE = 0
-	SOURCE_WEB  = 1
+	SourceFile = 0
+	SourceWeb  = 1
 )
 
 func init() {
@@ -75,6 +78,7 @@ func init() {
 	bass.PluginLoad("./lib/libbassflac.so")
 }
 
+// StartAPI 启动网易云API
 func StartAPI() *exec.Cmd {
 	homedir, err := os.UserHomeDir()
 	if err != nil {
@@ -84,9 +88,9 @@ func StartAPI() *exec.Cmd {
 	apiExecPath := homedir + "/xzp/NeteaseApi/app.js"
 	_, err = os.Stat(apiExecPath)
 	if os.IsNotExist(err) {
-		logger.WriteLog("Couldn't start api server,app.js not found.")
+		// 没有API文件不能启动程序
+		logger.WriteLog("Couldn't start API server,app.js not found.")
 		panic(err)
-		return nil
 	}
 	cmd := exec.Command("node", apiExecPath)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
@@ -99,6 +103,7 @@ func StartAPI() *exec.Cmd {
 	return cmd
 }
 
+// NewPlayer 创建新播放器
 func NewPlayer(login *account.Login) *Player {
 	player := &Player{
 		PlayMode:        ModeSingleLoop,
@@ -124,11 +129,11 @@ func NewPlayer(login *account.Login) *Player {
 
 	player.Playlist = make([]Music, len(sheet.Songs))
 
-	player.NowPlayingSheetId = sheet.Id // For heartbeat mode purpose
+	player.NowPlayingSheetID = sheet.ID // For heartbeat mode purpose
 	for i, v := range sheet.Songs {
 		player.Playlist[i].Name = v.Name
-		player.Playlist[i].PlaySourceType = SOURCE_WEB
-		player.Playlist[i].Id = v.Id
+		player.Playlist[i].PlaySourceType = SourceWeb
+		player.Playlist[i].ID = v.ID
 	}
 	player.SetCurrentIndex(0)
 	player.PlayMode = StatusOther
@@ -153,10 +158,12 @@ func NewPlayer(login *account.Login) *Player {
 	return player
 }
 
+// Release 释放所有播放资源，不能再播放除非重新加载。
 func Release() {
 	bass.Free()
 }
 
+// AttachFile 添加一个文件到播放器的播放列表
 func (p *Player) AttachFile(file string) {
 	music := Music{
 		Name:           "",
@@ -166,11 +173,12 @@ func (p *Player) AttachFile(file string) {
 		Length:         0,
 		FilePath:       file,
 		Handle:         0,
-		PlaySourceType: SOURCE_FILE,
+		PlaySourceType: SourceFile,
 	}
 	p.Playlist = append(p.Playlist, music)
 }
 
+// AttachFileWeb 添加一个网络文件到播放器播放列表
 func (p *Player) AttachFileWeb(url string) {
 	music := Music{
 		Name:           "",
@@ -180,24 +188,28 @@ func (p *Player) AttachFileWeb(url string) {
 		Length:         0,
 		FilePath:       url,
 		Handle:         0,
-		PlaySourceType: SOURCE_WEB,
+		PlaySourceType: SourceWeb,
 	}
 	p.Playlist = append(p.Playlist, music)
 }
 
+// GetCurrentIndex 获取播放列表当前播放序号
 func (p *Player) GetCurrentIndex() int {
 	nowPlayingIndex := p.NowPlayingIndex
 	return nowPlayingIndex
 }
 
+// SetCurrentIndex 设置播放列表当前播放序号
 func (p *Player) SetCurrentIndex(index int) {
 	p.NowPlayingIndex = index
 }
 
+// EmptyPlayList 清空播放列表
 func (p *Player) EmptyPlayList() {
 	p.Playlist = []Music{}
 }
 
+// GetNextIndex 获取下一首应该是那个序号
 func (p *Player) GetNextIndex() int {
 	listLen := len(p.Playlist)
 	currentIndex := p.GetCurrentIndex()
@@ -212,6 +224,7 @@ func (p *Player) GetNextIndex() int {
 	return currentIndex
 }
 
+// GetLastIndex 获取下一首应该是那个序号
 func (p *Player) GetLastIndex() int {
 	listLen := len(p.Playlist)
 	currentIndex := p.GetCurrentIndex()
@@ -226,6 +239,8 @@ func (p *Player) GetLastIndex() int {
 	}
 	return currentIndex
 }
+
+// Play 播放音乐
 func (p *Player) Play() {
 	defer func() {
 		if err := recover(); err != nil {
@@ -253,11 +268,11 @@ func (p *Player) Play() {
 	if p.Status == StatusPlaying || p.Status == StatusOther || p.Status == StatusStopped {
 		nowPlayingIndex := p.GetCurrentIndex()
 		nowPlayingPath := p.Playlist[nowPlayingIndex].FilePath
-		if p.Playlist[nowPlayingIndex].PlaySourceType == SOURCE_FILE {
+		if p.Playlist[nowPlayingIndex].PlaySourceType == SourceFile {
 			handle = bass.StreamCreateFile(0, nowPlayingPath, 0, 0)
 		}
-		if p.Playlist[nowPlayingIndex].PlaySourceType == SOURCE_WEB {
-			p.RefreshPlayUrl()
+		if p.Playlist[nowPlayingIndex].PlaySourceType == SourceWeb {
+			p.RefreshPlayURL()
 			nowPlayingPath := p.Playlist[nowPlayingIndex].FilePath
 			//log.Println("Now",nowPlayingPath)
 			handle = bass.StreamCreateURL(nowPlayingPath, 0, nil, nil)
@@ -291,6 +306,7 @@ func (p *Player) Play() {
 	}
 }
 
+// Pause 暂停播放
 func (p *Player) Pause() {
 	handle := p.Playlist[p.GetCurrentIndex()].Handle
 	if handle <= 0 {
@@ -301,6 +317,7 @@ func (p *Player) Pause() {
 	p.Status = StatusPaused
 }
 
+// Stop 停止播放
 func (p *Player) Stop() {
 	handle := p.Playlist[p.GetCurrentIndex()].Handle
 	if handle <= 0 {
@@ -310,11 +327,14 @@ func (p *Player) Stop() {
 	p.Status = StatusStopped
 }
 
+// GetRandomIndex 获取随机的播放序号，用于随机模式。
 func (p *Player) GetRandomIndex() int {
 	rand.Seed(time.Now().UnixNano())
 	randomIndex := rand.Intn(len(p.Playlist))
 	return randomIndex
 }
+
+// Next 下一首
 func (p *Player) Next() {
 	defer func() {
 		//捕获test抛出的panic
@@ -347,9 +367,7 @@ func (p *Player) Next() {
 	p.Play()
 }
 
-func (p *Player) PrintLog() {
-	fmt.Printf("\n[INFO] A Test Msg...")
-}
+// Last 上一首，如果是随机模式则为上一次播放的歌曲
 func (p *Player) Last() {
 	defer func() {
 		//捕获test抛出的panic
@@ -380,18 +398,22 @@ func (p *Player) Last() {
 	p.Play()
 }
 
+// SetPlayMode 设置播放模式 [列表循环|单曲循环|随即|单曲结束等]
 func (p *Player) SetPlayMode(mode int) {
 	p.PlayMode = mode
 }
 
+// SetPlayFeature 设置播放特点 [我喜欢的|FM|日推等]
 func (p *Player) SetPlayFeature(fea int) {
 	p.PlayFeature = fea
 }
 
+// FreeStream 释放handle占用的资源
 func (p *Player) FreeStream(handle uint) uint32 {
 	return bass.StreamFree(handle)
 }
 
+// RemoveFile 从播放列表中移除制定序号歌曲
 func (p *Player) RemoveFile(index int) {
 	if len(p.Playlist) <= 0 {
 		return
@@ -404,24 +426,29 @@ func (p *Player) RemoveFile(index int) {
 	}
 }
 
+// GetPosition 获取播放位置（秒）
 func (m *Music) GetPosition() int {
 	return bass.ChannelBytes2Seconds(m.Handle, bass.ChannelGetPosition(m.Handle, bass.BASS_POS_BYTE))
 }
 
+// GetLength 获取歌曲长度（秒）
 func (m *Music) GetLength() int {
 	return bass.ChannelBytes2Seconds(m.Handle, bass.ChannelGetLength(m.Handle, bass.BASS_POS_BYTE))
 }
 
+// SetPosition 设置播放位置（秒）
 func (m *Music) SetPosition(sec int) int {
 	pos := bass.ChannelSeconds2Bytes(m.Handle, sec)
 	return bass.ChannelSetPosition(m.Handle, pos, bass.BASS_POS_BYTE)
 }
 
+// SetCover 设置歌曲封面
 func (m *Music) SetCover(src string) {
 	m.Cover = src
 }
 
-func (p *Player) RefreshPlayUrl() {
+// RefreshPlayURL 刷新歌曲的URL，建议每次播放前执行一次，防止链接实效。
+func (p *Player) RefreshPlayURL() {
 	defer func() {
 		//捕获test抛出的panic
 		if err := recover(); err != nil {
@@ -429,7 +456,7 @@ func (p *Player) RefreshPlayUrl() {
 			logger.WriteLog(fmt.Sprint(err))
 		}
 	}()
-	url := p.Login.GetUrlById(p.Playlist[p.GetCurrentIndex()].Id)
+	url := p.Login.GetURLByID(p.Playlist[p.GetCurrentIndex()].ID)
 	if url == "" {
 		logger.WriteLog("Failed to refresh music url.")
 		fmt.Printf("\n[ERR] 刷新歌曲播放地址失败.")
@@ -437,10 +464,12 @@ func (p *Player) RefreshPlayUrl() {
 	p.Playlist[p.GetCurrentIndex()].FilePath = url
 }
 
+// GetVolume 获取音量(0-100)%
 func (p *Player) GetVolume() uint {
 	return bass.GetChanVol(p.Playlist[p.GetCurrentIndex()].Handle)
 }
 
+// SetVolume 设置音量(0-100)%
 func (p *Player) SetVolume(value uint) uint {
 	p.Volume = value
 	return bass.SetChanVol(p.Playlist[p.GetCurrentIndex()].Handle, value)

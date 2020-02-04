@@ -3,59 +3,82 @@ package account
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+
 	"github.com/CxZMoE/xz-ease-player/logger"
 	"github.com/CxZMoE/xz-ease-player/network"
-	"log"
 )
 
+// API 地址列表
 const (
-	ApiServer             = "http://localhost:3000/"
-	ApiLoginMail          = ApiServer + "login?email=%s&password=%s"
-	ApiLoginStatus        = ApiServer + "login/status"
-	ApiLogout             = ApiServer + "logout"
-	ApiUserDetail         = ApiServer + "user/detail?uid=%d"
-	ApiHeartbeatMode      = ApiServer + "playmode/intelligence/list?id=%d&pid=%d" // songid and playsheerid
-	ApiMusicUrl           = ApiServer + "song/url?id="                            // More can be added
-	ApiMusicUrlSingle     = ApiServer + "song/url?id=%d"
-	ApiSignIn             = ApiServer + "daily_signin?type=%d"
-	ApiFM                 = ApiServer + "personal_fm"
-	ApiDailyRecommendSong = ApiServer + "recommend/songs"
-	ApiLoveList           = ApiServer + "likelist?uid=%d"
-	ApiUserPlaySheetList  = ApiServer + "user/playlist?uid=%d"
-	ApiPlaySheetDetail    = ApiServer + "playlist/detail?id=%d"
-	ApiSongDetail         = ApiServer + "song/detail?ids="
-	ApiLyric              = ApiServer + "lyric?id=%d"
-	ApiLike               = ApiServer + "like?id=%d"
+	// APIServer API服务器地址
+	APIServer = "http://localhost:3000/"
+	// APILoginMail 邮箱登录地址
+	APILoginMail = APIServer + "login?email=%s&password=%s"
+	// APILoginStatus 登录状态地址
+	APILoginStatus = APIServer + "login/status"
+	// APILogout 登出
+	APILogout = APIServer + "logout"
+	// APIUserDetail 用户详情
+	APIUserDetail = APIServer + "user/detail?UID=%d"
+	// APIHeartbeatMode 心动模式
+	APIHeartbeatMode = APIServer + "playmode/intelligence/list?ID=%d&pid=%d" // songID and playsheerid
+	// APIMusicURL 获取音乐的地址
+	APIMusicURL = APIServer + "song/URL?ID=" // More can be added
+	// APIMusicURLSingle 获取单个音乐地址
+	APIMusicURLSingle = APIServer + "song/URL?ID=%d"
+	// APISignIn 签到API
+	APISignIn = APIServer + "daily_signin?type=%d"
+	// APIFM 电台API
+	APIFM = APIServer + "personal_fm"
+	// APIDailyRecommendSong 每日推荐API
+	APIDailyRecommendSong = APIServer + "recommend/songs"
+	// APILoveList 我喜欢的音乐API
+	APILoveList = APIServer + "likelist?UID=%d"
+	// APIUserPlaySheetList 用户歌单API
+	APIUserPlaySheetList = APIServer + "user/playlist?UID=%d"
+	// APIPlaySheetDetail 歌单详情API
+	APIPlaySheetDetail = APIServer + "playlist/detail?ID=%d"
+	// APISongDetail 歌曲详情API
+	APISongDetail = APIServer + "song/detail?ids="
+	// APILyric 歌词API
+	APILyric = APIServer + "lyric?ID=%d"
+	// APILike 喜欢此音乐API
+	APILike = APIServer + "like?ID=%d"
 )
 
+// Login 网易云登录客户端
 type Login struct {
-	ApiAddr    string
+	APIAddr    string
 	Client     *network.Client
 	LoginData  []byte
 	UserData   User
 	PlaySheets []PlaySheet
 }
 
+// User 用户信息登记
 type User struct {
-	Uid        int
+	UID        int
 	UserName   string
 	CreateTime int
 	VipType    int
 	Profile    Profile
 }
 
+// Profile 用户个人信息登记
 type Profile struct {
 	NickName      string
 	Gender        int
 	Birthday      int
 	DefaultAvatar bool
-	AvatarUrl     string
+	AvatarURL     string
 	City          int
 }
 
-func (l *Login) Like(id int) bool {
-	reqUrl := fmt.Sprintf(ApiLike, id)
-	res := l.Client.DoGet(reqUrl, nil)
+// Like 喜欢指定ID的音乐
+func (l *Login) Like(ID int) bool {
+	reqURL := fmt.Sprintf(APILike, ID)
+	res := l.Client.DoGet(reqURL, nil)
 	if res == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return false
@@ -66,6 +89,7 @@ func (l *Login) Like(id int) bool {
 	return false
 }
 
+// GetStatusCode 获取返回状态码
 func (l *Login) GetStatusCode(data []byte) int {
 	var j interface{}
 	err := json.Unmarshal(data, &j)
@@ -75,12 +99,11 @@ func (l *Login) GetStatusCode(data []byte) int {
 	if j != nil {
 		code := int(j.(map[string]interface{})["code"].(float64))
 		return code
-	} else {
-		return 0
 	}
-
+	return 0
 }
 
+// ParseLoginData 解析登录信息
 func (l *Login) ParseLoginData() {
 	data := l.LoginData
 	if data == nil {
@@ -97,7 +120,7 @@ func (l *Login) ParseLoginData() {
 	if j != nil {
 		// Node Account:
 		account := j.(map[string]interface{})["account"].(map[string]interface{})
-		l.UserData.Uid = int(account["id"].(float64))
+		l.UserData.UID = int(account["ID"].(float64))
 		l.UserData.UserName = string(account["userName"].(string))
 		l.UserData.CreateTime = int(account["createTime"].(float64))
 		l.UserData.VipType = int(account["vipType"].(float64))
@@ -105,7 +128,7 @@ func (l *Login) ParseLoginData() {
 		// Node Profile:
 		profile := j.(map[string]interface{})["profile"].(map[string]interface{})
 		l.UserData.Profile.NickName = profile["nickname"].(string)
-		l.UserData.Profile.AvatarUrl = profile["avatarUrl"].(string)
+		l.UserData.Profile.AvatarURL = profile["AvatarURL"].(string)
 		l.UserData.Profile.Birthday = int(profile["birthday"].(float64))
 		l.UserData.Profile.City = int(profile["city"].(float64))
 		l.UserData.Profile.DefaultAvatar = false
@@ -116,9 +139,10 @@ func (l *Login) ParseLoginData() {
 
 }
 
+// LoginEmail 使用邮箱登录
 func (l *Login) LoginEmail(email, password string) []byte {
-	url := fmt.Sprintf(ApiLoginMail, email, password)
-	data := l.Client.DoLoginGet(url, nil)
+	URL := fmt.Sprintf(APILoginMail, email, password)
+	data := l.Client.DoLoginGet(URL, nil)
 	l.LoginData = data
 	//log.Println(string(data))
 	l.ParseLoginData()
@@ -126,19 +150,20 @@ func (l *Login) LoginEmail(email, password string) []byte {
 	return data
 }
 
-func (l *Login) GetUid() int {
+// GetUID 获取用户UID
+func (l *Login) GetUID() int {
 	var j map[string]interface{}
 	json.Unmarshal(l.LoginData, &j)
 	if j != nil {
 		account := j["account"].(map[string]interface{})
-		return int(account["id"].(float64))
-	} else {
-		return 0
+		return int(account["ID"].(float64))
 	}
+	return 0
 }
 
+// Logout 登出
 func (l *Login) Logout() []byte {
-	result := l.Client.DoGet(ApiLogout, nil)
+	result := l.Client.DoGet(APILogout, nil)
 	if result == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return nil
@@ -146,9 +171,10 @@ func (l *Login) Logout() []byte {
 	return result
 }
 
-func (l *Login) GetUrlById(id int) string {
+// GetURLByID 获取歌曲URL
+func (l *Login) GetURLByID(ID int) string {
 	var j interface{}
-	data := l.Client.DoGet(fmt.Sprintf(ApiMusicUrlSingle, id), nil)
+	data := l.Client.DoGet(fmt.Sprintf(APIMusicURLSingle, ID), nil)
 	if data == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return ""
@@ -156,7 +182,7 @@ func (l *Login) GetUrlById(id int) string {
 	json.Unmarshal(data, &j)
 	var a interface{}
 	if data != nil {
-		a = j.(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["url"]
+		a = j.(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["URL"]
 		if a == nil {
 			return ""
 		}
@@ -167,16 +193,18 @@ func (l *Login) GetUrlById(id int) string {
 	return a.(string)
 }
 
+// Song 记录歌曲播放所需的信息，用于传递给播放列表信息。
 type Song struct {
 	Name string
-	Url  string
-	Id   int
+	URL  string
+	ID   int
 }
 
+// GetFMSong 获取私人电台歌曲列表
 func (l *Login) GetFMSong() []Song {
 	var j interface{}
 	var ss []Song
-	data := l.Client.DoGet(ApiFM, nil)
+	data := l.Client.DoGet(APIFM, nil)
 	if data == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return nil
@@ -184,14 +212,14 @@ func (l *Login) GetFMSong() []Song {
 	json.Unmarshal(data, &j)
 	if data != nil {
 		list := j.(map[string]interface{})["data"].([]interface{})
-		for i, _ := range list {
+		for i := range list {
 			var s Song
 			s.Name = list[i].(map[string]interface{})["name"].(string)
-			s.Url = l.GetUrlById(int(list[i].(map[string]interface{})["id"].(float64)))
-			if s.Url == "" {
+			s.URL = l.GetURLByID(int(list[i].(map[string]interface{})["ID"].(float64)))
+			if s.URL == "" {
 				continue
 			}
-			s.Id = int(list[i].(map[string]interface{})["id"].(float64))
+			s.ID = int(list[i].(map[string]interface{})["ID"].(float64))
 			ss = append(ss, s)
 		}
 	} else {
@@ -201,10 +229,11 @@ func (l *Login) GetFMSong() []Song {
 	return ss
 }
 
+// GetFavSong 获取我喜欢的音乐歌曲列表
 func (l *Login) GetFavSong() []Song {
 	var j interface{}
 	var ss []Song
-	data := l.Client.DoGet(fmt.Sprintf(ApiLoveList, l.UserData.Uid), nil)
+	data := l.Client.DoGet(fmt.Sprintf(APILoveList, l.UserData.UID), nil)
 	if data == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return nil
@@ -231,39 +260,40 @@ func (l *Login) GetFavSong() []Song {
 	return ss
 }
 
+// PlaySheet 用户歌单
 type PlaySheet struct {
-	Id          int
+	ID          int
 	Name        string
 	Creator     int
 	CreatorName string
 	Songs       []Song
 }
 
-// Load detail(id,name) of a play sheet.
+// LoadDetail 加载歌单的详情
 func (p *PlaySheet) LoadDetail(l *Login) {
 	var ss []Song
-	reqUrl := fmt.Sprintf(ApiPlaySheetDetail, p.Id)
-	detailDatas := l.Client.DoGet(reqUrl, nil)
+	reqURL := fmt.Sprintf(APIPlaySheetDetail, p.ID)
+	detailDatas := l.Client.DoGet(reqURL, nil)
 	if detailDatas == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return
 	}
-	var detailDatasJson interface{}
-	json.Unmarshal(detailDatas, &detailDatasJson)
-	if detailDatasJson != nil {
-		playList := detailDatasJson.(map[string]interface{})["playlist"]
+	var detailDatasJSON interface{}
+	json.Unmarshal(detailDatas, &detailDatasJSON)
+	if detailDatasJSON != nil {
+		playList := detailDatasJSON.(map[string]interface{})["playlist"]
 		if playList != nil {
 			tracks := playList.(map[string]interface{})["tracks"]
 			if tracks != nil {
 				for _, v := range tracks.([]interface{}) {
 					var s Song
 					songName := v.(map[string]interface{})["name"]
-					songId := v.(map[string]interface{})["id"]
-					if songName == nil || songId == nil {
+					songID := v.(map[string]interface{})["ID"]
+					if songName == nil || songID == nil {
 						continue
 					} else {
 						s.Name = songName.(string)
-						s.Id = int(songId.(float64))
+						s.ID = int(songID.(float64))
 					}
 					ss = append(ss, s)
 				}
@@ -280,27 +310,28 @@ func (p *PlaySheet) LoadDetail(l *Login) {
 
 }
 
+// GetAllPlaySheet 获取用户所有的歌单
 func (l *Login) GetAllPlaySheet() {
-	uid := l.UserData.Uid
-	reqUrl := fmt.Sprintf(ApiUserPlaySheetList, uid)
-	listDatas := l.Client.DoGet(reqUrl, nil)
+	UID := l.UserData.UID
+	reqURL := fmt.Sprintf(APIUserPlaySheetList, UID)
+	listDatas := l.Client.DoGet(reqURL, nil)
 	if listDatas == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return
 	}
-	var playListJson interface{}
+	var playListJSON interface{}
 	var sheets []PlaySheet
-	json.Unmarshal(listDatas, &playListJson)
-	if playListJson != nil {
-		playList := playListJson.(map[string]interface{})["playlist"]
+	json.Unmarshal(listDatas, &playListJSON)
+	if playListJSON != nil {
+		playList := playListJSON.(map[string]interface{})["playlist"]
 		if playList != nil {
 			for _, v := range playList.([]interface{}) {
 				var s PlaySheet
-				sheetId := v.(map[string]interface{})["id"]
+				sheetID := v.(map[string]interface{})["ID"]
 				sheetName := v.(map[string]interface{})["name"]
 				creator := v.(map[string]interface{})["creator"]
-				if sheetId != nil {
-					s.Id = int(sheetId.(float64))
+				if sheetID != nil {
+					s.ID = int(sheetID.(float64))
 				} else {
 					continue
 				}
@@ -310,9 +341,9 @@ func (l *Login) GetAllPlaySheet() {
 					continue
 				}
 				if creator != nil {
-					creatorId := creator.(map[string]interface{})["userId"]
-					if creatorId != nil {
-						s.Creator = int(creatorId.(float64))
+					creatorID := creator.(map[string]interface{})["userId"]
+					if creatorID != nil {
+						s.Creator = int(creatorID.(float64))
 					} else {
 						continue
 					}
@@ -328,30 +359,32 @@ func (l *Login) GetAllPlaySheet() {
 		} else {
 			return
 		}
+		// 歌单赋值给login客户端
 		l.PlaySheets = sheets
 	} else {
 		return
 	}
 }
 
+// GetSongDetails 获取id序列的详细信息，包含URL
 func (l *Login) GetSongDetails(ids ...int) []Song {
-	var songs_temp []Song
-	var nameUrl = ApiSongDetail
+	var songsTemp []Song
+	var nameURL = APISongDetail
 	for i, v := range ids {
 		var s Song
-		s.Id = v
-		songs_temp = append(songs_temp, s)
+		s.ID = v
+		songsTemp = append(songsTemp, s)
 		if i == len(ids)-1 {
-			nameUrl += fmt.Sprintf("%d", v)
+			nameURL += fmt.Sprintf("%d", v)
 			continue
 		}
-		nameUrl += fmt.Sprintf("%d,", v)
+		nameURL += fmt.Sprintf("%d,", v)
 	}
 
-	//log.Println("Created Url...")
+	//log.Println("Created URL...")
 	var songs []Song
 	//log.Println("GetSongDetails...")
-	songDatas := l.Client.DoGet(nameUrl, nil)
+	songDatas := l.Client.DoGet(nameURL, nil)
 	if songDatas == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return nil
@@ -362,25 +395,25 @@ func (l *Login) GetSongDetails(ids ...int) []Song {
 	if err := json.Unmarshal(songDatas, &songData); err != nil {
 		log.Println(err)
 	}
-	// song/url
-	// song/url
+	// song/URL
+	// song/URL
 
 	if songData != nil {
-		songsJson := songData.(map[string]interface{})["songs"].([]interface{})
-		// song/url
-		for _, v := range songsJson {
+		songsJSON := songData.(map[string]interface{})["songs"].([]interface{})
+		// song/URL
+		for _, v := range songsJSON {
 			var s Song
-			id := v.(map[string]interface{})["id"]
-			if id == nil {
+			ID := v.(map[string]interface{})["ID"]
+			if ID == nil {
 				continue
 			} else {
 				name := v.(map[string]interface{})["name"]
 				if name == nil {
 					continue
 				}
-				s.Id = int(id.(float64))
+				s.ID = int(ID.(float64))
 				s.Name = name.(string)
-				// Make sure we both have id and name
+				// Make sure we both have ID and name
 			}
 			songs = append(songs, s)
 
@@ -392,29 +425,30 @@ func (l *Login) GetSongDetails(ids ...int) []Song {
 	return songs
 }
 
+// GetRecommend 获取每日推荐歌单
 func (l *Login) GetRecommend() []Song {
-	var recJson interface{}
+	var recJSON interface{}
 	var ss []Song
-	reqUrl := ApiDailyRecommendSong
-	recDatas := l.Client.DoGet(reqUrl, nil)
+	reqURL := APIDailyRecommendSong
+	recDatas := l.Client.DoGet(reqURL, nil)
 	if recDatas == nil {
 		fmt.Printf("\n[ERR] 请检查您的网络状况")
 		return nil
 	}
-	json.Unmarshal(recDatas, &recJson)
+	json.Unmarshal(recDatas, &recJSON)
 	if recDatas != nil {
-		recommend := recJson.(map[string]interface{})["recommend"]
+		recommend := recJSON.(map[string]interface{})["recommend"]
 		if recommend != nil {
 			for _, v := range recommend.([]interface{}) {
 				var s Song
 				if v != nil {
 					name := v.(map[string]interface{})["name"]
-					id := v.(map[string]interface{})["id"]
-					if name == nil || id == nil {
+					ID := v.(map[string]interface{})["ID"]
+					if name == nil || ID == nil {
 						continue
 					} else {
 						s.Name = name.(string)
-						s.Id = int(id.(float64))
+						s.ID = int(ID.(float64))
 					}
 				} else {
 					continue
@@ -430,6 +464,7 @@ func (l *Login) GetRecommend() []Song {
 	return ss
 }
 
+// NewLogin 创建新的网易云登录客户端
 func NewLogin(client *network.Client) *Login {
 
 	return &Login{"http://localhost:3000/", client, nil, User{}, []PlaySheet{}}
