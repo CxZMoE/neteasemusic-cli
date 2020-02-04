@@ -68,6 +68,7 @@ sudo cp libbass.so /usr/lib
 | CTRL+ALT+D| 前往推荐 |
 | CTRL+ALT+M| 改变播放模式 |
 | CTRL+ALT+L| 添加到喜欢 |
+| CTRL+ALT+L| 取消喜欢 |
 
 ## 命令行帮助菜单
 输入m可以查看帮助

@@ -58,8 +58,8 @@ func fav(player *control.Player, login *account.Login) {
 	toIndex := 0
 	login.GetAllPlaySheet()
 	sheet := login.PlaySheets[toIndex]
-	fmt.Printf("\n[SheetName] %s", sheet.Name)
-	fmt.Printf("\n[Creator] %s", sheet.CreatorName)
+	fmt.Printf("\n[歌单名] %s", sheet.Name)
+	fmt.Printf("\n[创建者] %s", sheet.CreatorName)
 
 	// Load Detail
 	sheet.LoadDetail(login) // Load Song IDs.
@@ -71,7 +71,7 @@ func fav(player *control.Player, login *account.Login) {
 	player.NowPlayingSheetID = sheet.ID // For heartbeat mode purpose.
 
 	for i, v := range sheet.Songs {
-		fmt.Printf("\n[Song %d] %s", len(sheet.Songs)-i, sheet.Songs[len(sheet.Songs)-i-1].Name)
+		fmt.Printf("\n[歌曲 %d] %s", len(sheet.Songs)-i, sheet.Songs[len(sheet.Songs)-i-1].Name)
 		player.Playlist[i].Name = v.Name
 		player.Playlist[i].PlaySourceType = control.SourceWeb
 		player.Playlist[i].ID = v.ID
@@ -172,6 +172,14 @@ func stop(player *control.Player) {
 		player.Stop()
 	}
 }
+func dislike(player *control.Player, login *account.Login) {
+	nowIndex := player.Playlist[player.GetCurrentIndex()].ID
+	if login.DisLike(nowIndex) {
+		fmt.Printf("\n[INFO] 取消喜欢音乐 [%s] 成功", player.Playlist[player.GetCurrentIndex()].Name)
+	} else {
+		fmt.Printf("\n[INFO] 取消喜欢喜欢 [%s] 失败.", player.Playlist[player.GetCurrentIndex()].Name)
+	}
+}
 
 func like(player *control.Player, login *account.Login) {
 	nowIndex := player.Playlist[player.GetCurrentIndex()].ID
@@ -227,7 +235,7 @@ func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 	}()
 
 	fmt.Printf("\n[INFO] 输入 'm' 查看帮助菜单")
-	go ShowLyric(player, login, 0)
+	go ShowLyric(player, login, 3)
 
 	// Hot key bindings
 	k := xzkey.NewKeyboard()
@@ -245,6 +253,7 @@ func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 		// CTRL+ALT+D: Go day recommend mode
 		// CTRL+ALT+M: Change mode
 		// CTRL+ALT+L: Like this song
+		// CTRL+ALT+K: Dislike this song
 	} else {
 		defer k.StopReadEvent()
 		// CTRL+ALT+RightArrow: Next Song
@@ -309,6 +318,11 @@ func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
 		k.BindKeyEvent("keyboard_like", func() {
 			like(player, login)
 		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.L])
+
+		// CTRL+ALT+K: Dislike this song
+		k.BindKeyEvent("keyboard_dislike", func() {
+			dislike(player, login)
+		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.K])
 
 		// CTRL+ALT+PgUp: Fast backward
 		k.BindKeyEvent("keyboard_fastforward", func() {
@@ -396,6 +410,9 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		break
 	case "like":
 		like(player, login)
+		break
+	case "dislike":
+		dislike(player, login)
 		break
 	case "day":
 		day(player, login)
@@ -547,7 +564,7 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 					var s account.Song
 					songInfo := v.(map[string]interface{})["songInfo"]
 					if songInfo != nil {
-						ID := songInfo.(map[string]interface{})["ID"]
+						ID := songInfo.(map[string]interface{})["id"]
 						name := songInfo.(map[string]interface{})["name"]
 						//log.Println(name)
 						if ID == nil || name == nil {
@@ -660,7 +677,8 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		CTRL+ALT+G: 前往私人FM
 		CTRL+ALT+D: 前往推荐
 		CTRL+ALT+M: 改变播放模式
-		CTRL+ALT+L: 添加到喜欢`)
+		CTRL+ALT+L: 添加到喜欢
+		CTRL+ALT+K: 取消喜欢`)
 	case "exit":
 		control.Release()
 		c.ShouldClose = true

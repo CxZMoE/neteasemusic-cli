@@ -118,7 +118,7 @@ func NewPlayer(login *account.Login) *Player {
 	}
 	login.GetAllPlaySheet()
 	if len(login.PlaySheets) == 0 {
-		fmt.Printf("[ERR] 获取我喜欢的歌单失败.\n[ERR]请用[fav]指令重试.")
+		fmt.Printf("\n[ERR] 获取我喜欢的歌单失败.\n[ERR] 请用[fav]指令重试.")
 		return player
 	}
 	sheet := login.PlaySheets[0]
