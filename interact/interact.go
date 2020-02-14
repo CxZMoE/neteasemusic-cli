@@ -630,8 +630,10 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 		Menu.AddItem("[play/p]: 播放歌曲")
 		Menu.AddItem("[pause]: 暂停歌曲")
 		Menu.AddItem("[stop]: 停止歌曲")
+		Menu.AddItem("[x]: 打开/关闭 歌词")
 		Menu.AddItem("[pg]: 显示进度条 #显示的时候输入字符会被刷掉.")
-		Menu.AddItem("[key] 显示快捷键列表")
+		Menu.AddItem("[key]: 显示快捷键列表")
+		Menu.AddItem("[exit/q]: 退出")
 		c.PrintMenu(Menu)
 		fmt.Printf("\n====================")
 		break
