@@ -80,7 +80,7 @@ func (l *Login) Like(ID int) bool {
 	reqURL := fmt.Sprintf(APILike, ID)
 	res := l.Client.DoGet(reqURL, nil)
 	if res == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] Like:请检查您的网络状况\n")
 		return false
 	}
 	if l.GetStatusCode(res) == 200 {
@@ -94,7 +94,7 @@ func (l *Login) DisLike(ID int) bool {
 	reqURL := fmt.Sprintf(APILike, ID) + "&like=false"
 	res := l.Client.DoGet(reqURL, nil)
 	if res == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] DisLike:请检查您的网络状况\n")
 		return false
 	}
 	if l.GetStatusCode(res) == 200 {
@@ -141,8 +141,13 @@ func (l *Login) ParseLoginData() {
 
 		// Node Profile:
 		profile := j.(map[string]interface{})["profile"].(map[string]interface{})
+		if profile == nil {
+			log.Println("[ERR] Empty User Profile Data")
+			return
+		}
 		l.UserData.Profile.NickName = profile["nickname"].(string)
-		l.UserData.Profile.AvatarURL = profile["avatarurl"].(string)
+		// NewERR
+		//l.UserData.Profile.AvatarURL = profile["avatarurl"].(string)
 		l.UserData.Profile.Birthday = int(profile["birthday"].(float64))
 		l.UserData.Profile.City = int(profile["city"].(float64))
 		l.UserData.Profile.DefaultAvatar = false
@@ -179,7 +184,7 @@ func (l *Login) GetUID() int {
 func (l *Login) Logout() []byte {
 	result := l.Client.DoGet(APILogout, nil)
 	if result == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] Logout:请检查您的网络状况\n")
 		return nil
 	}
 	return result
@@ -190,7 +195,7 @@ func (l *Login) GetURLByID(ID int) string {
 	var j interface{}
 	data := l.Client.DoGet(fmt.Sprintf(APIMusicURLSingle, ID), nil)
 	if data == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] GURL:请检查您的网络状况\n")
 		return ""
 	}
 	json.Unmarshal(data, &j)
@@ -220,7 +225,7 @@ func (l *Login) GetFMSong() []Song {
 	var ss []Song
 	data := l.Client.DoGet(APIFM, nil)
 	if data == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] FM:请检查您的网络状况\n")
 		return nil
 	}
 	json.Unmarshal(data, &j)
@@ -249,7 +254,7 @@ func (l *Login) GetFavSong() []Song {
 	var ss []Song
 	data := l.Client.DoGet(fmt.Sprintf(APILoveList, l.UserData.UID), nil)
 	if data == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] Fav:请检查您的网络状况\n")
 		return nil
 	}
 	json.Unmarshal(data, &j)
@@ -289,7 +294,7 @@ func (p *PlaySheet) LoadDetail(l *Login) {
 	reqURL := fmt.Sprintf(APIPlaySheetDetail, p.ID)
 	detailDatas := l.Client.DoGet(reqURL, nil)
 	if detailDatas == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] LoadDetail:请检查您的网络状况\n")
 		return
 	}
 	var detailDatasJSON interface{}
@@ -330,7 +335,7 @@ func (l *Login) GetAllPlaySheet() {
 	reqURL := fmt.Sprintf(APIUserPlaySheetList, UID)
 	listDatas := l.Client.DoGet(reqURL, nil)
 	if listDatas == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n\n")
+		fmt.Printf("\n[ERR] PS:请检查您的网络状况\n\n")
 		return
 	}
 	var playListJSON interface{}
@@ -400,7 +405,7 @@ func (l *Login) GetSongDetails(ids ...int) []Song {
 	//log.Println("GetSongDetails...")
 	songDatas := l.Client.DoGet(nameURL, nil)
 	if songDatas == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] GSD:请检查您的网络状况\n")
 		return nil
 	}
 	//log.Println("GetSongDetails...")
@@ -446,7 +451,7 @@ func (l *Login) GetRecommend() []Song {
 	reqURL := APIDailyRecommendSong
 	recDatas := l.Client.DoGet(reqURL, nil)
 	if recDatas == nil {
-		fmt.Printf("\n[ERR] 请检查您的网络状况\n")
+		fmt.Printf("\n[ERR] GRC:请检查您的网络状况\n")
 		return nil
 	}
 	json.Unmarshal(recDatas, &recJSON)

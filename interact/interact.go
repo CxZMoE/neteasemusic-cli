@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"runtime"
 
 	"github.com/CxZMoE/NetEase-CMD/account"
 	"github.com/CxZMoE/NetEase-CMD/control"
@@ -226,139 +227,134 @@ func mode(player *control.Player) {
 
 // MainLoop 客户端主循环
 func (c *ClientApp) MainLoop(login *account.Login, player *control.Player) {
-	defer func() {
-		//捕获test抛出的panic
-		if err := recover(); err != nil {
-			fmt.Printf("\n[ERR] 请检查您的网络状况")
-			logger.WriteLog(fmt.Sprint(err))
-		}
-	}()
 
 	fmt.Printf("\n[INFO] 输入 'm' 查看帮助菜单")
 	go ShowLyric(player, login, 3)
 
 	// Hot key bindings
-	k := xzkey.NewKeyboard()
-	if k == nil {
-		// CTRL+ALT+RightArrow: Next Song
-		// CTRL+ALT+LeftArrow: Last Song
-		// CTRL+ALT+PgUp: Fast backward
-		// CTRL+ALT+PgDn: Fast forward
-		// CTRL+ALT+P: Play/Pause
-		// CTRL+ALT+]: Increase volume
-		// CTRL+ALT+[: Decrease volume
-		// CTRL+ALT+F: Go favorite mode
-		// CTRL+ALT+G: Go FM mode
-		// CTRL+ALT+S: Stop playing
-		// CTRL+ALT+D: Go day recommend mode
-		// CTRL+ALT+M: Change mode
-		// CTRL+ALT+L: Like this song
-		// CTRL+ALT+K: Dislike this song
-	} else {
-		defer k.StopReadEvent()
-		// CTRL+ALT+RightArrow: Next Song
-		k.BindKeyEvent("keyboard_next", func() {
-			player.Next()
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.RIGHT])
+	if runtime.GOOS == "linux" {
+		k := xzkey.NewKeyboard()
+		if k == nil {
+			// CTRL+ALT+RightArrow: Next Song
+			// CTRL+ALT+LeftArrow: Last Song
+			// CTRL+ALT+PgUp: Fast backward
+			// CTRL+ALT+PgDn: Fast forward
+			// CTRL+ALT+P: Play/Pause
+			// CTRL+ALT+]: Increase volume
+			// CTRL+ALT+[: Decrease volume
+			// CTRL+ALT+F: Go favorite mode
+			// CTRL+ALT+G: Go FM mode
+			// CTRL+ALT+S: Stop playing
+			// CTRL+ALT+D: Go day recommend mode
+			// CTRL+ALT+M: Change mode
+			// CTRL+ALT+L: Like this song
+			// CTRL+ALT+K: Dislike this song
+		} else {
+			defer k.StopReadEvent()
+			// CTRL+ALT+RightArrow: Next Song
+			k.BindKeyEvent("keyboard_next", func() {
+				player.Next()
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.RIGHT])
 
-		// CTRL+ALT+LeftArrow: Last Song
-		k.BindKeyEvent("keyboard_last", func() {
-			player.Last()
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.LEFT])
+			// CTRL+ALT+LeftArrow: Last Song
+			k.BindKeyEvent("keyboard_last", func() {
+				player.Last()
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.LEFT])
 
-		// CTRL+ALT+P: Play/Pause
-		k.BindKeyEvent("keyboard_pause", func() {
-			if player.Status == control.StatusPlaying {
-				player.Pause()
-			} else {
-				player.Play()
-			}
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.P])
+			// CTRL+ALT+P: Play/Pause
+			k.BindKeyEvent("keyboard_pause", func() {
+				if player.Status == control.StatusPlaying {
+					player.Pause()
+				} else {
+					player.Play()
+				}
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.P])
 
-		// CTRL+ALT+]: Increase volume
-		k.BindKeyEvent("keyboard_vol_increase", func() {
-			vol := player.GetVolume() + 10
-			player.SetVolume(vol)
-			fmt.Printf("\n[VOL] %d%%", vol)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.Zkhy])
+			// CTRL+ALT+]: Increase volume
+			k.BindKeyEvent("keyboard_vol_increase", func() {
+				vol := player.GetVolume() + 10
+				player.SetVolume(vol)
+				fmt.Printf("\n[VOL] %d%%", vol)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.Zkhy])
 
-		// CTRL+ALT+[: Decrease volume
-		k.BindKeyEvent("keyboard_vol_decrease", func() {
-			vol := player.GetVolume() - 10
-			player.SetVolume(vol)
-			fmt.Printf("\n[VOL] %d%%", vol)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.Zkhz])
+			// CTRL+ALT+[: Decrease volume
+			k.BindKeyEvent("keyboard_vol_decrease", func() {
+				vol := player.GetVolume() - 10
+				player.SetVolume(vol)
+				fmt.Printf("\n[VOL] %d%%", vol)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.Zkhz])
 
-		// CTRL+ALT+F: Go favorite mode
-		k.BindKeyEvent("keyboard_fav", func() {
-			fav(player, login)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.F])
+			// CTRL+ALT+F: Go favorite mode
+			k.BindKeyEvent("keyboard_fav", func() {
+				fav(player, login)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.F])
 
-		// CTRL+ALT+G: Go FM mode
-		k.BindKeyEvent("keyboard_fm", func() {
-			fm(player, login)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.G])
+			// CTRL+ALT+G: Go FM mode
+			k.BindKeyEvent("keyboard_fm", func() {
+				fm(player, login)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.G])
 
-		// CTRL+ALT+S: Stop playing
-		k.BindKeyEvent("keyboard_stop", func() {
-			stop(player)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.S])
+			// CTRL+ALT+S: Stop playing
+			k.BindKeyEvent("keyboard_stop", func() {
+				stop(player)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.S])
 
-		// CTRL+ALT+D: Go day recommend mode
-		k.BindKeyEvent("keyboard_day", func() {
-			day(player, login)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.D])
+			// CTRL+ALT+D: Go day recommend mode
+			k.BindKeyEvent("keyboard_day", func() {
+				day(player, login)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.D])
 
-		// CTRL+ALT+M: Change mode
-		k.BindKeyEvent("keyboard_mode", func() {
-			mode(player)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.M])
+			// CTRL+ALT+M: Change mode
+			k.BindKeyEvent("keyboard_mode", func() {
+				mode(player)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.M])
 
-		// CTRL+ALT+L: Like this song
-		k.BindKeyEvent("keyboard_like", func() {
-			like(player, login)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.L])
+			// CTRL+ALT+L: Like this song
+			k.BindKeyEvent("keyboard_like", func() {
+				like(player, login)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.L])
 
-		// CTRL+ALT+K: Dislike this song
-		k.BindKeyEvent("keyboard_dislike", func() {
-			dislike(player, login)
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.K])
+			// CTRL+ALT+K: Dislike this song
+			k.BindKeyEvent("keyboard_dislike", func() {
+				dislike(player, login)
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.K])
 
-		// CTRL+ALT+PgUp: Fast backward
-		k.BindKeyEvent("keyboard_fastforward", func() {
-			var secInt = player.Playlist[player.GetCurrentIndex()].GetPosition() - 15
-			length := player.Playlist[player.GetCurrentIndex()].GetLength()
-			if secInt > length || secInt < 0 {
+			// CTRL+ALT+PgUp: Fast backward
+			k.BindKeyEvent("keyboard_fastforward", func() {
+				var secInt = player.Playlist[player.GetCurrentIndex()].GetPosition() - 15
+				length := player.Playlist[player.GetCurrentIndex()].GetLength()
+				if secInt > length || secInt < 0 {
 
-			} else {
-				player.Playlist[player.GetCurrentIndex()].SetPosition(secInt)
-				go func() {
-					if !player.IsShowProgress {
-						player.IsShowProgress = true
-						time.Sleep(time.Millisecond * 200)
-						player.IsShowProgress = false
-					}
-				}()
-			}
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.PgUp])
+				} else {
+					player.Playlist[player.GetCurrentIndex()].SetPosition(secInt)
+					go func() {
+						if !player.IsShowProgress {
+							player.IsShowProgress = true
+							time.Sleep(time.Millisecond * 200)
+							player.IsShowProgress = false
+						}
+					}()
+				}
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.PgUp])
 
-		// CTRL+ALT+PgDn: Fast forward
-		k.BindKeyEvent("keyboard_fastbackward", func() {
-			var secInt = player.Playlist[player.GetCurrentIndex()].GetPosition() + 15
-			length := player.Playlist[player.GetCurrentIndex()].GetLength()
-			if secInt > length || secInt < 0 {
+			// CTRL+ALT+PgDn: Fast forward
+			k.BindKeyEvent("keyboard_fastbackward", func() {
+				var secInt = player.Playlist[player.GetCurrentIndex()].GetPosition() + 15
+				length := player.Playlist[player.GetCurrentIndex()].GetLength()
+				if secInt > length || secInt < 0 {
 
-			} else {
-				player.Playlist[player.GetCurrentIndex()].SetPosition(secInt)
-				go func() {
-					if !player.IsShowProgress {
-						player.IsShowProgress = true
-						time.Sleep(time.Millisecond * 200)
-						player.IsShowProgress = false
-					}
-				}()
-			}
-		}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.PgDn])
+				} else {
+					player.Playlist[player.GetCurrentIndex()].SetPosition(secInt)
+					go func() {
+						if !player.IsShowProgress {
+							player.IsShowProgress = true
+							time.Sleep(time.Millisecond * 200)
+							player.IsShowProgress = false
+						}
+					}()
+				}
+			}, k.Keys[xzkey.LCTRL], k.Keys[xzkey.LALT], k.Keys[xzkey.PgDn])
+		}
 	}
 
 	//defer k.StopReadEvent()

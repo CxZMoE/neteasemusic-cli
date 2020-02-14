@@ -4,10 +4,7 @@ import "C"
 import (
 	"fmt"
 	"math/rand"
-	"os"
-	"os/exec"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/CxZMoE/NetEase-CMD/account"
@@ -76,31 +73,6 @@ const (
 func init() {
 	bass.Init()
 	bass.PluginLoad("./lib/libbassflac.so")
-}
-
-// StartAPI 启动网易云API
-func StartAPI() *exec.Cmd {
-	homedir, err := os.UserHomeDir()
-	if err != nil {
-		logger.WriteLog("无法获取用户目录地质")
-		return nil
-	}
-	apiExecPath := homedir + "/xzp/NeteaseApi/app.js"
-	_, err = os.Stat(apiExecPath)
-	if os.IsNotExist(err) {
-		// 没有API文件不能启动程序
-		logger.WriteLog("Couldn't start API server,app.js not found.")
-		panic(err)
-	}
-	cmd := exec.Command("node", apiExecPath)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-	err = cmd.Start()
-	if err != nil {
-		panic(err)
-	}
-	//output,_ := cmd.Output()
-	//log.Println(output)
-	return cmd
 }
 
 // NewPlayer 创建新播放器
@@ -244,7 +216,7 @@ func (p *Player) GetLastIndex() int {
 func (p *Player) Play() {
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Printf("\n[ERR] 请检查您的网络状况.")
+			fmt.Printf("\n[ERR] Play:请检查您的网络状况.")
 			logger.WriteLog(fmt.Sprint(err))
 		}
 	}()
@@ -339,7 +311,7 @@ func (p *Player) Next() {
 	defer func() {
 		//捕获test抛出的panic
 		if err := recover(); err != nil {
-			fmt.Printf("\n[ERR] 请检查您的网络状况.")
+			fmt.Printf("\n[ERR] Next:请检查您的网络状况.")
 			logger.WriteLog(fmt.Sprint(err))
 		}
 	}()
@@ -372,7 +344,7 @@ func (p *Player) Last() {
 	defer func() {
 		//捕获test抛出的panic
 		if err := recover(); err != nil {
-			fmt.Printf("\n[ERR] 请检查您的网络状况.")
+			fmt.Printf("\n[ERR] Last:请检查您的网络状况.")
 			logger.WriteLog(fmt.Sprint(err))
 		}
 	}()
@@ -452,7 +424,7 @@ func (p *Player) RefreshPlayURL() {
 	defer func() {
 		//捕获test抛出的panic
 		if err := recover(); err != nil {
-			fmt.Printf("\n[ERR] 请检查您的网络状况.")
+			fmt.Printf("\n[ERR] RPL:请检查您的网络状况.")
 			logger.WriteLog(fmt.Sprint(err))
 		}
 	}()
