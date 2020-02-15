@@ -12,12 +12,12 @@
 #### 如果没有安装`node`请先安装,否则会报错  
 Ubuntu: `sudo apt install npm`  
 Archlinux: `sudo pacman -S npm`  
-Windows: 官网下载安装`node`
+Windows: 官网下载安装`node`  
 检查: `npm --version`
 
 #### 预编译包 (不建议使用，因为基本上是我一个人用所以最新请下载源码自行编译)
 * 前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载最新版  
-* [百度网盘](https://pan.baidu.com/s/1DWxXGCi3xNv-ZmUTG_e6DQ) 提取码: efgt
+* [百度网盘](https://pan.baidu.com/s/1DWxXGCi3xNv-ZmUTG_e6DQ) 提取码: efgt  
 
 ```shell script
 # 最新版请到release下载，这里以v1.0 为例
@@ -57,8 +57,7 @@ sudo cp libbass.so /usr/lib # 这步是linux要做的
 1. 基本的播放操作
 1. 支持多功能全局快捷键（打游戏的时候终于不用切出来了
 
-注:全局快捷键功能需要程序以root身份运行 `$ sudo ./xzp`
-
+注:全局快捷键功能需要程序以root身份运行 `$ sudo ./xzp`  
 ## 键盘快捷键		
 | 按键   | 功能          |
 | ----- | --------------- | 
