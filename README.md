@@ -1,13 +1,13 @@
 # NetEase-CMD
 一个基于命令行的网易云音乐播放器 for Linux
 
-[![example](https://github.com/CxZMoE/NetEase-CMD/raw/master/image/example.gif)](https://github.com/CxZMoE/NetEase-CMD)
+[![example](https://github.com/CxZMoE/NetEase-CMD/raw/master/image/example.gif)](https://github.com/CxZMoE/NetEase-CMD)  
 
 ## 安装
 #### 依赖
-`libbass` # linux
-`bass.dll` # windows
-`node`
+`libbass` # linux  
+`bass.dll` # windows  
+`node`  
 
 #### 如果没有安装`node`请先安装,否则会报错  
 Ubuntu: `sudo apt install npm`  
