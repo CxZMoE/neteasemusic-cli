@@ -13,7 +13,7 @@ Ubuntu: `sudo apt install npm`
 Archlinux: `sudo pacman -S npm`  
 检查: `npm --version`
 
-#### 预编译包
+#### 预编译包 (不建议使用，因为基本上是我一个人用所以最新请下载源码自行编译)
 * 前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载最新版  
 * [百度网盘](https://pan.baidu.com/s/1DWxXGCi3xNv-ZmUTG_e6DQ) 提取码: efgt
 
@@ -37,8 +37,11 @@ sudo cp libbass.so /usr/lib
 
 git clone https://github.com/CxZMoE/Netease-CMD.git
 cd Netease-CMD/
+git clone https://github.com/Binaryify/NeteaseCloudMusicApi.git
+mv NeteaseCloudMusicApi/* ./NeteaseApi/*
+rm -rf NeteaseCloudMusicApi
 go build -o ncmd
-sudo cp libbass.so /usr/lib
+sudo cp libbass.so /usr/lib # 这步是linux要做的
 ./ncmd   #运行
 ```
 
