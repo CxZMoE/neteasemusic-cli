@@ -5,12 +5,14 @@
 
 ## 安装
 #### 依赖
-`libbass`
+`libbass` # linux
+`bass.dll` # windows
 `node`
 
 #### 如果没有安装`node`请先安装,否则会报错  
 Ubuntu: `sudo apt install npm`  
 Archlinux: `sudo pacman -S npm`  
+Windows: 官网下载安装`node`
 检查: `npm --version`
 
 #### 预编译包 (不建议使用，因为基本上是我一个人用所以最新请下载源码自行编译)
@@ -105,5 +107,5 @@ sudo cp libbass.so /usr/lib # 这步是linux要做的
 ```
 
 ### 感谢以下项目的贡献
-* Binaryify / NeteaseCloudMusicApi 
-* buger / goterm 
+* Binaryify / [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)  
+* buger / [goterm](https://github.com/buger/goterm)
