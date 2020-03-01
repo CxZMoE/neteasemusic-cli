@@ -1,0 +1,3 @@
+[submodule "ssd"]   #子模块名称
+    path = NeteaseApi       #存放子模块的地址
+    url = https://github.com/Binaryify/NeteaseCloudMusicApi  #子模块的原始路径
