@@ -30,6 +30,7 @@ npm install
 
 # 软连接主程序到/usr/bin
 # 第一种 (前提是已经把 ~/bin 加入PATH中)
+# 第一种用sudo运行的时候找不到主程序
 mkdir ~/bin
 ln $GOPATH/bin/NetEase-CMD -s ~/bin/NetEase-CMD
 
