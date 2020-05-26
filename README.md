@@ -3,49 +3,45 @@
 
 [![example](https://github.com/CxZMoE/NetEase-CMD/raw/master/image/example.gif)](https://github.com/CxZMoE/NetEase-CMD)  
 
-## 安装
-#### 依赖
-`libbass` # linux  
-`bass.dll` # windows  
-`node`  
+# 安装
 
-#### 如果没有安装`node`请先安装,否则会报错  
-Ubuntu: `sudo apt install npm`  
-Archlinux: `sudo pacman -S npm`  
-Windows: 官网下载安装`node`  
-检查: `npm --version`
-
-#### 预编译包 (不建议使用，因为基本上是我一个人用所以最新请下载源码自行编译)
-* 前往[release](https://github.com/CxZMoE/NetEase-CMD/releases/)下载最新版  
-* [百度网盘](https://pan.baidu.com/s/1DWxXGCi3xNv-ZmUTG_e6DQ) 提取码: efgt  
-
+## 手动安装
 ```shell script
-# 最新版请到release下载，这里以v1.0 为例
-wget https://github.com/CxZMoE/NetEase-CMD/releases/download/v1.0/NetEase-CMD_v1.0_linux_amd64.tar.xz
-mkdir ncmd && mv NetEase-CMD_v1.0_linux_amd64.tar.xz ncmd
-cd ncmd # 前往安装目录
-tar -Jxvf NetEase-CMD_v1.0_linux_amd64.tar.xz # 解压
-sudo cp libbass.so /usr/lib
-/.ncmd # 运行
-# sudo /.ncmd # 支持全局快捷键
-```
-
-#### 编译运行
-```shell script
+# 可以将这个脚本复制到 xxx.sh 中执行
 # 如果没有装node请先安装
 # Ubuntu: sudo apt install npm
 # Arch: sudo pacman -S npm
 
+# 如果没有装golang请先安装
+# Ubuntu: sudo apt install golang
+# Arch: sudo pacman -S go
 
-git clone https://github.com/CxZMoE/Netease-CMD.git
-cd Netease-CMD/
-git clone https://github.com/Binaryify/NeteaseCloudMusicApi.git
-mv NeteaseCloudMusicApi/* ./NeteaseApi/*
-rm -rf NeteaseCloudMusicApi
-go build -o ncmd
-sudo cp libbass.so /usr/lib # 这步是linux要做的
-/.ncmd   #运行
+go get -u github.com/CxZMoE/NetEase-CMD
+
+# 复制动态链接库
+cd $GOPATH/src/github.com/CxZMoE/
+sudo cp libbass.so /lib
+sudo cp lib/libbassflac.so /lib
+
+
+# 安装Node包
+cd $GOPATH/src/github.com/CxZMoE/NetEase-CMD/NeteaseApi
+npm install
+
+# 软连接主程序到/usr/bin
+# 第一种 (前提是已经把 ~/bin 加入PATH中)
+mkdir ~/bin
+ln $GOPATH/bin/NetEase-CMD -s ~/bin/NetEase-CMD
+
+# 第二种 需要sudo
+sudo ln $GOPATH/bin/NetEase-CMD -s /usr/bin/NetEase-CMD
+
+# 安装完毕
+echo "Installation of NetEase-CMD finished"
+
 ```
+
+# 使用方法
 
 ## 功能特性
 1. 支持MP3格式、FLAC无损格式音频播放
