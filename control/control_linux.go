@@ -1,3 +1,5 @@
+// +build linux
+
 package control
 
 import "C"
@@ -72,7 +74,7 @@ const (
 
 func init() {
 	bass.Init()
-	bass.PluginLoad("./lib/libbassflac.so")
+	bass.PluginLoad("/lib/libbassflac.so")
 }
 
 // NewPlayer 创建新播放器

@@ -393,7 +393,7 @@ func (c *ClientApp) inputHandler(login *account.Login, player *control.Player, i
 				logger.WriteLog("Failed to get home path.")
 				return
 			}
-			os.Remove(homedir + "/xzp/cookie")
+			os.Remove(homedir + "/.ncmd/cookie")
 		} else {
 			fmt.Printf("\nY你还没有登录")
 		}

@@ -26,8 +26,8 @@ mkdir ncmd && mv NetEase-CMD_v1.0_linux_amd64.tar.xz ncmd
 cd ncmd # 前往安装目录
 tar -Jxvf NetEase-CMD_v1.0_linux_amd64.tar.xz # 解压
 sudo cp libbass.so /usr/lib
-./ncmd # 运行
-# sudo ./ncmd # 支持全局快捷键
+/.ncmd # 运行
+# sudo /.ncmd # 支持全局快捷键
 ```
 
 #### 编译运行
@@ -44,7 +44,7 @@ mv NeteaseCloudMusicApi/* ./NeteaseApi/*
 rm -rf NeteaseCloudMusicApi
 go build -o ncmd
 sudo cp libbass.so /usr/lib # 这步是linux要做的
-./ncmd   #运行
+/.ncmd   #运行
 ```
 
 ## 功能特性
@@ -57,7 +57,7 @@ sudo cp libbass.so /usr/lib # 这步是linux要做的
 1. 基本的播放操作
 1. 支持多功能全局快捷键（打游戏的时候终于不用切出来了
 
-注:全局快捷键功能需要程序以root身份运行 `$ sudo ./xzp`  
+注:全局快捷键功能需要程序以root身份运行 `$ sudo ./.ncmd`  
 ## 键盘快捷键		
 | 按键   | 功能          |
 | ----- | --------------- | 

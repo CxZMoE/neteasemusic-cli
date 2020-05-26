@@ -37,11 +37,11 @@ func NewClient() *Client {
 		logger.WriteLog("Failed to get home path.")
 		return nil
 	}
-	_, err = os.Stat(homedir + "/xzp/cookie")
+	_, err = os.Stat(homedir + "/.ncmd/cookie")
 	var cookieJar http.CookieJar
 	var loginStatus bool
 	if os.IsExist(err) {
-		cookieJar = LoadJar(homedir + "/xzp/cookie")
+		cookieJar = LoadJar(homedir + "/.ncmd/cookie")
 		loginStatus = true
 	} else {
 		cookieJar, err = cookiejar.New(nil)
@@ -208,7 +208,7 @@ func (c *Client) SaveJar(jar http.CookieJar) {
 		logger.WriteLog("Failed to get home path")
 		return
 	}
-	file, err := os.OpenFile(homedir+"/xzp/cookie", os.O_WRONLY|os.O_CREATE, 0755)
+	file, err := os.OpenFile(homedir+"/.ncmd/cookie", os.O_WRONLY|os.O_CREATE, 0755)
 
 	dealErr(err)
 	defer file.Close()

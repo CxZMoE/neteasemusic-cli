@@ -33,7 +33,9 @@ func StartAPI() *exec.Cmd {
 	//	logger.WriteLog("无法获取用户目录地质")
 	//	return nil
 	//}
-	apiExecPath := "./NeteaseApi/app.js"
+	home := os.Getenv("GOPATH")
+
+	apiExecPath := home + "/src/github.com/CxZMoE/NetEase-CMD/NeteaseApi/app.js"
 	_, err := os.Stat(apiExecPath)
 	if os.IsNotExist(err) {
 		// 没有API文件不能启动程序
@@ -67,12 +69,12 @@ func AppRun() {
 	defer syscall.Kill(-apiPid, syscall.SIGKILL)
 	app := interact.NewClientApp()
 	client := network.NewClient()
-	_, err = os.Stat(homedir + "/xzp/cookie")
+	_, err = os.Stat(homedir + "/.ncmd/cookie")
 	if os.IsNotExist(err) {
 
 		fmt.Printf("\n[INFO] 你还没有登录呢,请先登录")
 	} else {
-		client.LoadJar(homedir + "/xzp/cookie")
+		client.LoadJar(homedir + "/.ncmd/cookie")
 		fmt.Printf("\n[INFO] 已登录")
 		fmt.Printf("\n[INFO] 如果无法获取到准确信息,请重新登陆.")
 
