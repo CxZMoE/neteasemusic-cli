@@ -33,9 +33,8 @@ func StartAPI() *exec.Cmd {
 	//	logger.WriteLog("无法获取用户目录地质")
 	//	return nil
 	//}
-	home := os.Getenv("GOPATH")
 
-	apiExecPath := home + "/src/github.com/CxZMoE/NetEase-CMD/NeteaseApi/app.js"
+	apiExecPath := "/usr/local/NetEase-CMD/NeteaseApi/app.js"
 	_, err := os.Stat(apiExecPath)
 	if os.IsNotExist(err) {
 		// 没有API文件不能启动程序

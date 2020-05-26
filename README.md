@@ -15,27 +15,34 @@
 # 如果没有装golang请先安装
 # Ubuntu: sudo apt install golang
 # Arch: sudo pacman -S go
+SRC_DIR=$GOPATH/src/github.com/CxZMoE/NetEase-CMD/
+INSTALL_DIR=/usr/local/NetEase-CMD
+echo "Creating program directory."
+sudo mkdir -p $INSTALL_DIR
 
+# 获取项目
+echo "Getting Project: NetEase-CMD"
 go get -u github.com/CxZMoE/NetEase-CMD
 
 # 复制动态链接库
-cd $GOPATH/src/github.com/CxZMoE/
+echo "Installing libraries."
+cd $SRC_DIR
 sudo cp libbass.so /lib
 sudo cp lib/libbassflac.so /lib
 
-
 # 安装Node包
-cd $GOPATH/src/github.com/CxZMoE/NetEase-CMD/NeteaseApi
+echo "Installing node packages."
+sudo cp -r $SRC_DIR/NeteaseApi $INSTALL_DIR/NeteaseApi
+cd $INSTALL_DIR/NeteaseApi
 npm install
 
-# 软连接主程序到/usr/bin
-# 第一种 (前提是已经把 ~/bin 加入PATH中)
-# 第一种用sudo运行的时候找不到主程序
-mkdir ~/bin
-ln $GOPATH/bin/NetEase-CMD -s ~/bin/NetEase-CMD
 
-# 第二种 需要sudo
-sudo ln $GOPATH/bin/NetEase-CMD -s /usr/bin/NetEase-CMD
+## 创建程序目录
+### cd $SRC_DIR/
+### go build -o NetEase-CMD
+echo "Installing main program."
+cd $GOPATH/bin
+sudo ln $INSTALL_DIR/NetEase-CMD -s /usr/bin/NetEase-CMD
 
 # 安装完毕
 echo "Installation of NetEase-CMD finished"
@@ -54,7 +61,7 @@ echo "Installation of NetEase-CMD finished"
 1. 基本的播放操作
 1. 支持多功能全局快捷键（打游戏的时候终于不用切出来了
 
-注:全局快捷键功能需要程序以root身份运行 `$ sudo ./.ncmd`  
+注:全局快捷键功能需要程序以root身份运行 `$ sudo NetEase-CMD`  
 ## 键盘快捷键		
 | 按键   | 功能          |
 | ----- | --------------- | 
