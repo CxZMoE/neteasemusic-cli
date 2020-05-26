@@ -62,7 +62,7 @@ echo "Installation of NetEase-CMD finished"
 1. 支持多功能全局快捷键（打游戏的时候终于不用切出来了
 
 注:全局快捷键功能需要程序以root身份运行 `$ sudo NetEase-CMD`  
-## 键盘快捷键		
+## 键盘快捷键 (停止维护，正在寻找更好方案)		
 | 按键   | 功能          |
 | ----- | --------------- | 
 | CTRL+ALT+左箭头| 上一首 |
