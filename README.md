@@ -47,7 +47,7 @@ sudo npm install
 ### go build -o NetEase-CMD
 echo "Installing main program."
 cd $GOPATH/bin
-sudo ln /usr/local/NetEase-CMD/NetEase-CMD -s /usr/bin/NetEase-CMD
+sudo ln /usr/local/NetEase-CMD/NetEase-CMD -sf /usr/bin/NetEase-CMD
 
 # 安装完毕
 echo "Installation of NetEase-CMD finished"
