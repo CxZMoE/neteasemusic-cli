@@ -20,6 +20,11 @@ INSTALL_DIR=/usr/local/NetEase-CMD
 echo "Creating program directory."
 sudo mkdir -p $INSTALL_DIR
 
+# 缺少依赖
+mkdir -p $GOPATH/src/golang.org/x
+cd $GOPATH/src/golang.org/x
+git clone https://github.com/golang/sys.git
+
 # 获取项目
 echo "Getting Project: NetEase-CMD"
 go get -u github.com/CxZMoE/NetEase-CMD
@@ -34,7 +39,7 @@ sudo cp lib/libbassflac.so /lib
 echo "Installing node packages."
 sudo cp -r $SRC_DIR/NeteaseApi $INSTALL_DIR/NeteaseApi
 cd $INSTALL_DIR/NeteaseApi
-npm install
+sudo npm install
 
 
 ## 创建程序目录
@@ -42,7 +47,7 @@ npm install
 ### go build -o NetEase-CMD
 echo "Installing main program."
 cd $GOPATH/bin
-sudo ln $INSTALL_DIR/NetEase-CMD -s /usr/bin/NetEase-CMD
+sudo ln /usr/local/NetEase-CMD/NetEase-CMD -s /usr/bin/NetEase-CMD
 
 # 安装完毕
 echo "Installation of NetEase-CMD finished"
