@@ -17,6 +17,8 @@
 # Arch: sudo pacman -S go
 SRC_DIR=$GOPATH/src/github.com/CxZMoE/NetEase-CMD/
 INSTALL_DIR=/usr/local/NetEase-CMD
+GOPATH=$HOME/go
+
 echo "Creating program directory."
 sudo mkdir -p $INSTALL_DIR
 
@@ -47,6 +49,7 @@ sudo npm install
 ### go build -o NetEase-CMD
 echo "Installing main program."
 cd $GOPATH/bin
+sudo ln $GOPATH/bin/NetEase-CMD -sf /usr/bin/NetEase-CMD
 sudo ln /usr/local/NetEase-CMD/NetEase-CMD -sf /usr/bin/NetEase-CMD
 
 # 安装完毕
