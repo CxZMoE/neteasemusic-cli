@@ -11,55 +11,17 @@ wget https://github.com/CxZMoE/NetEase-CMD/releases/download/v1.1.1/NetEase-CMD.
 sudo dpkg -i NetEase-CMD.deb
 ```
 
-## 手动安装
-```shell script
-# 可以将这个脚本复制到 xxx.sh 中执行
-# 如果没有装node请先安装
-# Ubuntu: sudo apt install npm
-# Arch: sudo pacman -S npm
+# 运行
+``` shell
+# 运行
+neteasecmd
 
-# 如果没有装golang请先安装
-# Ubuntu: sudo apt install golang
-# Arch: sudo pacman -S go
-SRC_DIR=$GOPATH/src/github.com/CxZMoE/NetEase-CMD/
-INSTALL_DIR=/usr/local/NetEase-CMD
-GOPATH=$HOME/go
+# 登陆
+login 邮箱 密码
 
-echo "Creating program directory."
-sudo mkdir -p $INSTALL_DIR
-
-# 缺少依赖
-mkdir -p $GOPATH/src/golang.org/x
-cd $GOPATH/src/golang.org/x
-git clone https://github.com/golang/sys.git
-
-# 获取项目
-echo "Getting Project: NetEase-CMD"
-go get -u github.com/CxZMoE/NetEase-CMD
-
-# 复制动态链接库
-echo "Installing libraries."
-cd $SRC_DIR
-sudo cp libbass.so /lib
-sudo cp lib/libbassflac.so /lib
-
-# 安装Node包
-echo "Installing node packages."
-sudo cp -r $SRC_DIR/NeteaseApi $INSTALL_DIR/NeteaseApi
-cd $INSTALL_DIR/NeteaseApi
-sudo npm install
-
-
-## 创建程序目录
-### cd $SRC_DIR/
-### go build -o NetEase-CMD
-echo "Installing main program."
-cd $GOPATH/bin
-sudo ln $GOPATH/bin/NetEase-CMD -sf /usr/bin/NetEase-CMD
-sudo ln /usr/local/NetEase-CMD/NetEase-CMD -sf /usr/bin/NetEase-CMD
-
-# 安装完毕
-echo "Installation of NetEase-CMD finished"
+#帮助
+m
+```
 
 ```
 
