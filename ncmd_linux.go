@@ -1,4 +1,5 @@
 // +build linux
+
 package main
 
 import (
@@ -34,7 +35,7 @@ func StartAPI() *exec.Cmd {
 	//	return nil
 	//}
 
-	apiExecPath := "/usr/local/NetEase-CMD/NeteaseApi/app.js"
+	apiExecPath := "/usr/share/NetEase-CMD/NeteaseApi/app.js"
 	_, err := os.Stat(apiExecPath)
 	if os.IsNotExist(err) {
 		// 没有API文件不能启动程序
@@ -52,6 +53,7 @@ func StartAPI() *exec.Cmd {
 	return cmd
 }
 
+// AppRun run application
 func AppRun() {
 	defer func() {
 		//捕获test抛出的panic

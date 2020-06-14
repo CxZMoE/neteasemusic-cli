@@ -5,6 +5,12 @@
 
 # 安装
 
+## Ubuntu/Debian系
+``` shell
+wget https://github.com/CxZMoE/NetEase-CMD/releases/download/v1.1.1/NetEase-CMD.deb
+sudo dpkg -i NetEase-CMD.deb
+```
+
 ## 手动安装
 ```shell script
 # 可以将这个脚本复制到 xxx.sh 中执行
@@ -112,6 +118,7 @@ echo "Installation of NetEase-CMD finished"
 19) [pg]: 显示进度条 #显示的时候输入字符会被刷掉.
 20) [key]: 显示快捷键列表
 21) [exit/q]: 退出
+22) [like/dislike]: 喜欢/取消喜欢
 ```
 
 ### 感谢以下项目的贡献
