@@ -1,5 +1,5 @@
 # NetEase-CLI
-一个CLI的网易云音乐播放器 for Linux
+一个CLI的网易云音乐播放器 for Linux 支持SQ音乐
 
 [![example](https://github.com/CxZMoE/NetEase-CMD/raw/master/image/example.gif)](https://github.com/CxZMoE/NetEase-CMD)  
 
