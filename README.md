@@ -14,7 +14,7 @@ sudo dpkg -i NetEase-CMD.deb
 # 运行
 ``` shell
 # 运行
-neteasecmd
+neteasecli
 
 # 登陆
 login 邮箱 密码
