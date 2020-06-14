@@ -1,5 +1,5 @@
-# NetEase-CMD
-一个基于命令行的网易云音乐播放器 for Linux
+# NetEase-CLI
+一个CLI的网易云音乐播放器 for Linux 支持SQ音乐
 
 [![example](https://github.com/CxZMoE/NetEase-CMD/raw/master/image/example.gif)](https://github.com/CxZMoE/NetEase-CMD)  
 
@@ -14,7 +14,7 @@ sudo dpkg -i NetEase-CMD.deb
 # 运行
 ``` shell
 # 运行
-neteasecmd
+neteasecli
 
 # 登陆
 login 邮箱 密码
