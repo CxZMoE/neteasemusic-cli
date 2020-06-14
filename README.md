@@ -7,8 +7,8 @@
 
 ## Ubuntu/Debian系
 ``` shell
-wget https://github.com/CxZMoE/NetEase-CMD/releases/download/v1.1.1/NetEase-CMD.deb
-sudo dpkg -i NetEase-CMD.deb
+wget https://github.com/CxZMoE/neteasemusic-cli/releases/download/v1.1.1/NetEase-CLI.deb
+sudo dpkg -i NetEase-CLI.deb
 ```
 
 # 运行
@@ -37,7 +37,7 @@ m
 7. 基本的播放操作
 8. 支持多功能全局快捷键（打游戏的时候终于不用切出来了
 
-注:全局快捷键功能需要程序以root身份运行 `$ sudo NetEase-CMD`  
+注:全局快捷键功能需要程序以root身份运行 `$ sudo neteasecli`  
 ## 键盘快捷键 (停止维护，正在寻找更好方案)		
 | 按键   | 功能          |
 | ----- | --------------- | 
